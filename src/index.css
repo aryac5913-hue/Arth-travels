@@ -72,9 +72,10 @@
   .hero__actions{margin-top:28px;gap:18px}
   .hero__actions .button{min-height:50px;padding:0 18px;gap:14px}
   .intro.section{padding-top:52px;padding-bottom:34px}
+  .intro{grid-template-columns:minmax(0,1fr);gap:24px}
   .intro .section-heading h2{font-size:clamp(34px,9vw,40px)}
   .intro .section-heading p{margin-top:14px;font-size:15px;line-height:1.7}
-  .intro__note{gap:14px;padding:14px 0 4px}
+  .intro__note{justify-self:stretch;max-width:none;gap:14px;padding:14px 0 4px}
   .video-section.section{padding:34px 22px 58px}
   .video-copy .section-heading h2{font-size:clamp(33px,8.8vw,38px)}
   .video-copy .section-heading p{font-size:14px;line-height:1.65}
