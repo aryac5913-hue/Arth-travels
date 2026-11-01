@@ -42,14 +42,21 @@ const content = {
     destinationsKicker: 'Find your next place', destinationsTitle: 'Journeys for every kind of traveller.',
     destinationsText: 'Choose a travel style below to explore itineraries and destinations.',
     domestic: 'Domestic Travel', domesticText: 'Explore every destination in our supplied domestic itinerary collection. Open a poster to view the complete day-by-day plan.',
-    international: 'International Travel', internationalText: 'Browse international tour itineraries from the assets folder. Open a trip to view its available language version.',
-    corporate: 'MICE Travel', corporateText: 'Meetings, incentives, conferences and exhibitions, thoughtfully planned for your team.',
+    international: 'International Travel', internationalText: 'Explore 11 international tour plans, from Thailand and Bhutan to Southeast Asia and Sri Lanka. Choose a destination photo, then open its itinerary; English and Marathi versions are shown where supplied.',
+    corporate: 'MICE Travel', corporateText: 'MICE itineraries are coming soon. We are preparing tailored corporate travel experiences for your team—please check back shortly.', comingSoon: 'Coming soon',
     pilgrimage: 'Pilgrimage Tour', pilgrimageText: 'Explore Char Dham, Kashi–Prayagraj–Ayodhya, Gaya, and Chitrakoot routes from the supplied itineraries.',
-    itinerary: 'Itinerary', viewItinerary: 'View itinerary', closeItinerary: 'Close itinerary', itineraryLanguage: 'Itinerary language', destinationPhoto: 'Destination photo', suppliedLanguageOnly: 'Showing the itinerary image supplied for this destination.',
-    aboutKicker: 'A little about us', aboutTitle: 'Travel planning with a human touch.',
-    aboutIntro: 'Arth Travels is focused on making thoughtful journeys feel clear, comfortable, and personal.',
-    placeholder: 'Editable placeholder copy', approachTitle: 'Our approach',
-    approachText: 'We listen first, understand how you like to travel, and shape an experience around what matters to you. This copy is ready to be replaced with the client’s approved company description.',
+    itinerary: 'Itinerary', viewItinerary: 'View itinerary', closeItinerary: 'Close itinerary', itineraryLanguage: 'Itinerary language', destinationPhoto: 'Destination photo', suppliedLanguageOnly: 'This itinerary is not available in the selected language; showing the available poster.',
+    aboutKicker: 'Our story, since 5 January 2026', aboutTitle: 'Travel that takes you closer to the stories of a place.',
+    aboutIntro: 'Arth Travels began on 5 January 2026. Since then, we have welcomed more than 2,000 people on family, couple, solo, group and corporate journeys.',
+    founderKicker: 'Meet our founder', founderName: 'Anand Dave', founderRole: 'Founder, Arth Travels · Community leader',
+    founderBio: 'A Pune-based public speaker and community figure, Anand is the founding president of Hindu Mahasangh. Since Arth Travels began on 5 January 2026, he has helped welcome more than 2,000 travellers. His interest in people, culture and history shapes journeys that go beyond the usual sightseeing.',
+    storyKicker: 'Go beyond the postcard', storyTitle: 'Every place has a story worth hearing.',
+    storyText: 'Our journeys are designed to make room for the history behind a destination. At Cellular Jail in the Andaman Islands, Anand shares a talk about Veer Savarkar—so a visit can become a moment of learning and reflection, not just a photo stop.',
+    journeyKicker: 'Our journey so far', journeyTitle: '2,000+ people. Countless stories. One journey with Arth.',
+    travellersValue: '2,000+', travellersLabel: 'Travellers', travellersCopy: 'Family, couple, solo and group journeys',
+    monthsValue: '10', monthsLabel: 'Months', monthsCopy: 'Of creating memorable experiences',
+    corporateValue: '5', corporateLabel: 'Corporate trips', corporateCopy: 'Building connections through travel',
+    futureValue: '∞', futureLabel: 'More journeys ahead', futureCopy: 'And countless memories yet to create',
     contactKicker: 'Let’s talk travel', contactTitle: 'Your next journey can start with a conversation.',
     contactText: 'Call or message Arth Travels and tell us where you would love to go.',
     phone: 'Phone', call: 'Call us', whatsapp: 'Chat on WhatsApp',
@@ -58,9 +65,9 @@ const content = {
     memoriesKicker: 'Travel memories', memoriesTitle: 'Happy Customers, Beautiful Memories.',
     memoriesText: 'A collection of travel moments captured on the water, on the trail, and along the way.',
     sampleAsset: 'Sample image — replace with approved customer photo', gallery: 'Memory gallery',
-    videoCount: '4 videos',
-    homeMemoryTitles: ['Memories Shared by Our Travellers', 'A Quiet Day on the Water', 'A Boat Ride Together'],
-    memoryVideoTitles: ['A Green Escape', 'Walking the Island Trail', 'Views Along the Way', 'A Journey to Remember'],
+    videoCount: '16 videos',
+    homeMemoryTitles: ['Andaman tour', 'A Quiet Day on the Water', 'A Boat Ride Together'],
+    memoryVideoTitles: ['A Green Escape', 'Walking the Island Trail', 'Views Along the Way', 'A Journey to Remember', 'A Shaded Forest Walk', 'Valley Under the Clouds', 'Along the Pine Trail', 'An Evening Together', 'The Trail Downhill', 'A Quiet Mountain Path', 'A Forest Pause', 'A Riverside Stroll', 'Steps to the Shrine', 'Prayer Flags on the Hillside', 'Misty Mountain Views', 'A Landmark Above the Valley'],
     feedback: 'Customer feedback', feedbackText: 'Reserved for approved customer feedback. No testimonial has been added.',
     videoPlaceholder: 'Approved customer travel video will be added here.',
     footerText: 'Thoughtful journeys, planned with care.', quickLinks: 'Explore', contactLabel: 'Contact',
@@ -83,14 +90,21 @@ const content = {
     destinationsKicker: 'पुढचे ठिकाण शोधा', destinationsTitle: 'प्रत्येक प्रवाशासाठी खास प्रवास.',
     destinationsText: 'प्रवासाचे नियोजन आणि ठिकाणे पाहण्यासाठी खालील प्रकारांपैकी एक निवडा.',
     domestic: 'देशांतर्गत प्रवास', domesticText: 'उपलब्ध देशांतर्गत प्रवास नियोजनातील सर्व ठिकाणे पाहा. प्रत्येक पोस्टर उघडून दिवसानुसार संपूर्ण कार्यक्रम वाचा.',
-    international: 'आंतरराष्ट्रीय प्रवास', internationalText: 'Assets मधील आंतरराष्ट्रीय सहलींचे नियोजन पाहा. प्रत्येक सहलीवर क्लिक करून उपलब्ध भाषेतील कार्यक्रम उघडा.',
-    corporate: 'MICE प्रवास', corporateText: 'टीमसाठी बैठका, प्रोत्साहन सहली, परिषदा आणि प्रदर्शने यांचे काळजीपूर्वक नियोजन.',
+    international: 'आंतरराष्ट्रीय प्रवास', internationalText: 'थायलंड आणि भूतानपासून आग्नेय आशिया व श्रीलंकेपर्यंतच्या ११ सहली पाहा. ठिकाणाचे छायाचित्र निवडून प्रवास कार्यक्रम उघडा; उपलब्ध इंग्रजी किंवा मराठी आवृत्ती दाखवली जाईल.',
+    corporate: 'MICE प्रवास', corporateText: 'MICE सहलींचे नियोजन लवकरच उपलब्ध होईल. खास कॉर्पोरेट प्रवास अनुभव तयार करत आहोत—कृपया लवकरच पुन्हा भेट द्या.', comingSoon: 'लवकरच येत आहे',
     pilgrimage: 'तीर्थयात्रा', pilgrimageText: 'उपलब्ध नियोजनात चारधाम, काशी–प्रयागराज–अयोध्या, गया आणि चित्रकूट यात्रांचा समावेश आहे.',
-    itinerary: 'प्रवास कार्यक्रम', viewItinerary: 'प्रवास कार्यक्रम पाहा', closeItinerary: 'प्रवास कार्यक्रम बंद करा', itineraryLanguage: 'प्रवास कार्यक्रमाची भाषा', destinationPhoto: 'पर्यटनस्थळाचे छायाचित्र', suppliedLanguageOnly: 'या ठिकाणासाठी उपलब्ध असलेले पोस्टर दाखवले आहे.',
-    aboutKicker: 'आमच्याबद्दल थोडेसे', aboutTitle: 'माणुसकीच्या स्पर्शासह प्रवास नियोजन.',
-    aboutIntro: 'Arth Travels ही विचारपूर्वक, आरामदायी आणि वैयक्तिक प्रवास अनुभव देणारी ट्रॅव्हल एजन्सी आहे.',
-    placeholder: 'बदलता येणारा नमुना मजकूर', approachTitle: 'आमचा दृष्टिकोन',
-    approachText: 'आम्ही आधी तुमचे म्हणणे ऐकतो, तुमची प्रवासाची पद्धत समजून घेतो आणि तुमच्यासाठी महत्त्वाच्या गोष्टींभोवती अनुभव घडवतो. अधिकृत मजकूर मिळाल्यावर हा मजकूर बदलता येईल.',
+    itinerary: 'प्रवास कार्यक्रम', viewItinerary: 'प्रवास कार्यक्रम पाहा', closeItinerary: 'प्रवास कार्यक्रम बंद करा', itineraryLanguage: 'प्रवास कार्यक्रमाची भाषा', destinationPhoto: 'पर्यटनस्थळाचे छायाचित्र', suppliedLanguageOnly: 'निवडलेल्या भाषेतील कार्यक्रम उपलब्ध नाही; उपलब्ध पोस्टर दाखवले आहे.',
+    aboutKicker: '५ जानेवारी २०२६ पासूनचा आमचा प्रवास', aboutTitle: 'प्रवास, जो ठिकाणांच्या कथा जवळ आणतो.',
+    aboutIntro: 'Arth Travels ची सुरुवात ५ जानेवारी २०२६ रोजी झाली. तेव्हापासून कौटुंबिक, जोडप्यांच्या, एकट्याने, समूह आणि कॉर्पोरेट सहलींमधून २,००० हून अधिक प्रवाशांनी आमच्यासोबत प्रवास केला आहे.',
+    founderKicker: 'आमचे संस्थापक', founderName: 'Anand Dave', founderRole: 'संस्थापक, Arth Travels · समाजाभिमुख व्यक्तिमत्त्व',
+    founderBio: 'पुण्यातील सार्वजनिक वक्ते आणि समाजाभिमुख व्यक्तिमत्त्व असलेले Anand हे Hindu Mahasangh चे संस्थापक अध्यक्ष आहेत. ५ जानेवारी २०२६ रोजी Arth Travels सुरू झाल्यापासून त्यांनी २,००० हून अधिक प्रवाशांचे स्वागत केले आहे. लोक, संस्कृती आणि इतिहासाविषयीची त्यांची आस्था सहलींना नेहमीच्या पर्यटनापलीकडे घेऊन जाते.',
+    storyKicker: 'फक्त दृश्यांपलीकडे', storyTitle: 'प्रत्येक ठिकाणाची एक कथा असते.',
+    storyText: 'प्रत्येक स्थळामागचा इतिहास जाणून घेण्यासाठी आमच्या सहलींमध्ये वेळ राखला जातो. अंदमानमधील सेल्युलर जेल येथे Anand वीर सावरकरांवर मनोगत मांडतात—म्हणून ती भेट केवळ फोटोचा थांबा न राहता शिकण्याचा आणि चिंतनाचा अनुभव बनते.',
+    journeyKicker: 'आतापर्यंतचा प्रवास', journeyTitle: '२,०००+ प्रवासी. असंख्य कथा. Arth सोबतचा एक प्रवास.',
+    travellersValue: '२,०००+', travellersLabel: 'प्रवासी', travellersCopy: 'कुटुंब, जोडपी, एकल आणि समूह सहली',
+    monthsValue: '१०', monthsLabel: 'महिने', monthsCopy: 'अविस्मरणीय अनुभव घडवताना',
+    corporateValue: '५', corporateLabel: 'कॉर्पोरेट सहली', corporateCopy: 'प्रवासातून नाती दृढ करत',
+    futureValue: '∞', futureLabel: 'आणखी अनेक सहली', futureCopy: 'आणि नव्या आठवणी अजून घडायच्या आहेत',
     contactKicker: 'चला, प्रवासाबद्दल बोलूया', contactTitle: 'तुमच्या पुढच्या प्रवासाची सुरुवात एका संवादाने होऊ शकते.',
     contactText: 'Arth Travels ला फोन किंवा संदेश करून तुम्हाला कुठे जायचे आहे ते सांगा.',
     phone: 'फोन', call: 'आम्हाला कॉल करा', whatsapp: 'WhatsApp वर संदेश करा',
@@ -99,9 +113,9 @@ const content = {
     memoriesKicker: 'प्रवासाच्या आठवणी', memoriesTitle: 'आनंदी ग्राहक, सुंदर आठवणी.',
     memoriesText: 'पाण्यावर, हिरवळीच्या पायवाटांवर आणि प्रवासात टिपलेले सुंदर क्षण.',
     sampleAsset: 'नमुना चित्र — मान्यताप्राप्त ग्राहक फोटोने बदला', gallery: 'आठवणींची गॅलरी',
-    videoCount: '४ व्हिडिओ',
-    homeMemoryTitles: ['आमच्या प्रवाशांनी जपलेल्या आठवणी', 'पाण्यावरचा निवांत दिवस', 'एकत्र केलेली बोट सफर'],
-    memoryVideoTitles: ['हिरवाईतली सहल', 'बेटाच्या पायवाटेवर', 'प्रवासातील निसर्गदृश्ये', 'आठवणीत राहणारा प्रवास'],
+    videoCount: '१६ व्हिडिओ',
+    homeMemoryTitles: ['अंदमान सहल', 'पाण्यावरचा निवांत दिवस', 'एकत्र केलेली बोट सफर'],
+    memoryVideoTitles: ['हिरवाईतली सहल', 'बेटाच्या पायवाटेवर', 'प्रवासातील निसर्गदृश्ये', 'आठवणीत राहणारा प्रवास', 'झाडीतून जाणारी पायवाट', 'ढगांखालील दरी', 'पाइनच्या झाडांमधून', 'एकत्र घालवलेली संध्याकाळ', 'डोंगरउताराची वाट', 'डोंगरातील शांत पायवाट', 'जंगलातील निवांत क्षण', 'नदीकाठची सहल', 'मंदिराकडे जाणाऱ्या पायऱ्या', 'डोंगरावरील प्रार्थना ध्वज', 'धुक्यात हरवलेले डोंगर', 'दरीवरील उंच ठिकाण'],
     feedback: 'ग्राहक अभिप्राय', feedbackText: 'मान्यताप्राप्त ग्राहक अभिप्रायासाठी राखीव. कोणताही बनावट अभिप्राय जोडलेला नाही.',
     videoPlaceholder: 'मान्यताप्राप्त ग्राहक प्रवास व्हिडिओ येथे जोडला जाईल.',
     footerText: 'काळजीपूर्वक नियोजित, मनापासून प्रवास.', quickLinks: 'पाहा', contactLabel: 'संपर्क',
@@ -113,13 +127,13 @@ const destinationNames = {
   en: {
     domestic: ['Maharashtra', 'Rajasthan', 'Kerala', 'Goa', 'Kashmir', 'Himachal Pradesh'],
     international: ['Dubai', 'Bali', 'Singapore', 'Thailand', 'Europe'],
-    corporate: ['Meetings & Events', 'Incentive Travel', 'Conferences', 'Exhibitions'],
+
     pilgrimage: ['Yamunotri', 'Gangotri', 'Kedarnath', 'Badrinath'],
   },
   mr: {
     domestic: ['महाराष्ट्र', 'राजस्थान', 'केरळ', 'गोवा', 'काश्मीर', 'हिमाचल प्रदेश'],
     international: ['दुबई', 'बाली', 'सिंगापूर', 'थायलंड', 'युरोप'],
-    corporate: ['बैठका आणि कार्यक्रम', 'प्रोत्साहन सहली', 'परिषदा', 'प्रदर्शने'],
+
     pilgrimage: ['यमुनोत्री', 'गंगोत्री', 'केदारनाथ', 'बद्रीनाथ'],
   },
 }
@@ -127,7 +141,7 @@ const destinationNames = {
 const destinationImages = {
   domestic: [img.india, img.rajasthan, img.kerala, img.backwater, img.desert, img.hero],
   international: [img.temple, img.bali, img.coast, img.roadtrip, img.rajasthan],
-  corporate: [img.airport, img.terminal, img.team, img.team],
+
   pilgrimage: [
     'https://upload.wikimedia.org/wikipedia/commons/b/b0/Kedarnathji-mandir.JPG',
     'https://upload.wikimedia.org/wikipedia/commons/2/22/Ganges_river_at_Varanasi_2008.jpeg',
@@ -138,43 +152,43 @@ const destinationImages = {
 
 type ItineraryTrip = { id: string; en: string; mr: string; thumbnail: string; english?: string; marathi?: string }
 const domesticTrips: ItineraryTrip[] = [
-  { id:'three-sisters', en:'Three Sisters · Assam, Meghalaya & Arunachal Pradesh', mr:'तीन भगिनी · आसाम, मेघालय आणि अरुणाचल प्रदेश', thumbnail:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=84', english:'Domestic/3 sisters/3 sisters.jpg', marathi:'Domestic/3 sisters/3 sisters(marathi).jpg' },
-  { id:'andaman-nicobar', en:'Andaman & Nicobar Islands', mr:'अंदमान आणि निकोबार बेटे', thumbnail:img.coast, english:'Domestic/Andaman and Nicobar/Andaman and nicobar(eng).jpg', marathi:'Domestic/Andaman and Nicobar/Anadaman and nicobar(marathi).jpg' },
-  { id:'andaman', en:'Andaman Island Tour', mr:'अंदमान बेट सहल', thumbnail:img.beach, english:'Domestic/Andaman and Nicobar/Andaman(eng).jpg', marathi:'Domestic/Andaman and Nicobar/Andaman (marathi).jpg' },
-  { id:'coastal-karnataka', en:'Coastal Karnataka', mr:'किनारी कर्नाटक', thumbnail:img.coast, english:'Domestic/Coastal Karnataka/coastal karnataka(eng).jpg', marathi:'Domestic/Coastal Karnataka/coastal karnataka.jpg' },
+  { id:'three-sisters', en:'Three Sisters · Assam, Meghalaya & Arunachal Pradesh', mr:'तीन भगिनी · आसाम, मेघालय आणि अरुणाचल प्रदेश', thumbnail:assetUrl('assets/Domestic/thumbnails/three-sisters.png'), english:'Domestic/3 sisters/3 sisters.jpg', marathi:'Domestic/3 sisters/3 sisters(marathi).jpg' },
+  { id:'andaman-nicobar', en:'Andaman & Nicobar Islands', mr:'अंदमान आणि निकोबार बेटे', thumbnail:assetUrl('assets/Domestic/thumbnails/andaman-nicobar.png'), english:'Domestic/Andaman and Nicobar/Andaman and nicobar(eng).jpg', marathi:'Domestic/Andaman and Nicobar/Anadaman and nicobar(marathi).jpg' },
+  { id:'andaman', en:'Andaman Island Tour', mr:'अंदमान बेट सहल', thumbnail:assetUrl('assets/Domestic/thumbnails/andaman-island.png'), english:'Domestic/Andaman and Nicobar/Andaman(eng).jpg', marathi:'Domestic/Andaman and Nicobar/Andaman (marathi).jpg' },
+  { id:'coastal-karnataka', en:'Coastal Karnataka', mr:'किनारी कर्नाटक', thumbnail:assetUrl('assets/Domestic/thumbnails/coastal-karnataka.png'), english:'Domestic/Coastal Karnataka/coastal karnataka(eng).jpg', marathi:'Domestic/Coastal Karnataka/coastal karnataka.jpg' },
   { id:'delhi-agra-jaipur', en:'Delhi · Agra · Jaipur', mr:'दिल्ली · आग्रा · जयपूर', thumbnail:'https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=900&q=84', english:'Domestic/Delhi-Agra-jaipur/Delhi-Agra-jaipur(eng).jpg', marathi:'Domestic/Delhi-Agra-jaipur/Delhi-Agra-jaipur.jpg' },
-  { id:'delhi-agra-mathura-amritsar', en:'Delhi · Agra · Mathura · Amritsar', mr:'दिल्ली · आग्रा · मथुरा · अमृतसर', thumbnail:img.india, english:'Domestic/Delhi-Agra-Mathura-Amritsar/Delhi-Agra-Mathura-Amritsar (eng).jpg', marathi:'Domestic/Delhi-Agra-Mathura-Amritsar/Delhi-Agra-Mathura-Amritsar.jpg' },
+  { id:'delhi-agra-mathura-amritsar', en:'Delhi · Agra · Mathura · Amritsar', mr:'दिल्ली · आग्रा · मथुरा · अमृतसर', thumbnail:assetUrl('assets/Domestic/thumbnails/delhi-agra-mathura.png'), english:'Domestic/Delhi-Agra-Mathura-Amritsar/Delhi-Agra-Mathura-Amritsar (eng).jpg', marathi:'Domestic/Delhi-Agra-Mathura-Amritsar/Delhi-Agra-Mathura-Amritsar.jpg' },
   { id:'hyderabad', en:'Hyderabad', mr:'हैदराबाद', thumbnail:'https://images.unsplash.com/photo-1696941515998-d83f24967aca?auto=format&fit=crop&w=900&q=84', marathi:'Domestic/Hyderabad/Hyderabad.jpg' },
   { id:'kerala', en:'Kerala', mr:'केरळ', thumbnail:img.kerala, english:'Domestic/Kerala/kerala(eng).jpg', marathi:'Domestic/Kerala/kerala(marathi).jpg' },
-  { id:'kerala-rameshwaram-madurai', en:'Kerala · Rameshwaram · Madurai', mr:'केरळ · रामेश्वरम · मदुराई', thumbnail:img.temple, english:'Domestic/Kerala-Rameshwaram-Madurai/Kerala-rameshwaram-madurai(eng).jpg', marathi:'Domestic/Kerala-Rameshwaram-Madurai/Kerala-rameshwaram-madurai(marathi).jpg' },
-  { id:'lakshadweep', en:'Lakshadweep', mr:'लक्षद्वीप', thumbnail:img.beach, english:'Domestic/Lakshadweep/Lakshadweep.jpg' },
-  { id:'leh-ladakh', en:'Leh Ladakh', mr:'लेह लडाख', thumbnail:'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=900&q=84', english:'Domestic/Leh Ladakh/Leh Ladakh(eng).jpg', marathi:'Domestic/Leh Ladakh/Leh Ladakh(marathi).jpg' },
-  { id:'meghalaya', en:'Meghalaya', mr:'मेघालय', thumbnail:'https://images.unsplash.com/photo-1432405972618-c60b0225b8f9?auto=format&fit=crop&w=900&q=84', english:'Domestic/Meghalya/Meghalya.jpg' },
-  { id:'odisha', en:'Odisha', mr:'ओडिशा', thumbnail:img.temple, english:'Domestic/Odisha/odisha(eng).jpg', marathi:'Domestic/Odisha/odisha.jpg' },
-  { id:'pathankot-dalhousie', en:'Pathankot · Dalhousie', mr:'पठाणकोट · डलहौसी', thumbnail:'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=900&q=84', english:'Domestic/Pathankot Dalhouse/pathankot dalhouse(eng).jpg', marathi:'Domestic/Pathankot Dalhouse/Pathankot dalhouse.jpg' },
+  { id:'kerala-rameshwaram-madurai', en:'Kerala · Rameshwaram · Madurai', mr:'केरळ · रामेश्वरम · मदुराई', thumbnail:assetUrl('assets/Domestic/thumbnails/kerala-rameshwaram-madurai.png'), english:'Domestic/Kerala-Rameshwaram-Madurai/Kerala-rameshwaram-madurai(eng).jpg', marathi:'Domestic/Kerala-Rameshwaram-Madurai/Kerala-rameshwaram-madurai(marathi).jpg' },
+  { id:'lakshadweep', en:'Lakshadweep', mr:'लक्षद्वीप', thumbnail:assetUrl('assets/Domestic/thumbnails/lakshadweep.png'), english:'Domestic/Lakshadweep/Lakshadweep.jpg' },
+  { id:'leh-ladakh', en:'Leh Ladakh', mr:'लेह लडाख', thumbnail:assetUrl('assets/Domestic/thumbnails/leh-ladakh.png'), english:'Domestic/Leh Ladakh/Leh Ladakh(eng).jpg', marathi:'Domestic/Leh Ladakh/Leh Ladakh(marathi).jpg' },
+  { id:'meghalaya', en:'Meghalaya', mr:'मेघालय', thumbnail:assetUrl('assets/Domestic/thumbnails/meghalaya.png'), english:'Domestic/Meghalya/Meghalya.jpg' },
+  { id:'odisha', en:'Odisha', mr:'ओडिशा', thumbnail:assetUrl('assets/Domestic/thumbnails/odisha.png'), english:'Domestic/Odisha/odisha(eng).jpg', marathi:'Domestic/Odisha/odisha.jpg' },
+  { id:'pathankot-dalhousie', en:'Pathankot · Dalhousie', mr:'पठाणकोट · डलहौसी', thumbnail:assetUrl('assets/Domestic/thumbnails/pathankot-dalhousie.png'), english:'Domestic/Pathankot Dalhouse/pathankot dalhouse(eng).jpg', marathi:'Domestic/Pathankot Dalhouse/Pathankot dalhouse.jpg' },
   { id:'rajasthan', en:'Rajasthan · Mewar', mr:'राजस्थान · मेवाड', thumbnail:img.rajasthan, english:'Domestic/Rajasthan/Rajasthan.jpg', marathi:'Domestic/Rajasthan/Rajasthan(marathi).jpg' },
   { id:'shimla-kullu-manali', en:'Shimla · Kullu · Manali', mr:'शिमला · कुल्लू · मनाली', thumbnail:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=84', english:'Domestic/Shimla-kullu-manali/Shimla-kullu-manali(eng).jpg', marathi:'Domestic/Shimla-kullu-manali/Shimla-kullu-manali(marathi).jpg' },
   { id:'sikkim-darjeeling', en:'Sikkim · Darjeeling', mr:'सिक्कीम · दार्जिलिंग', thumbnail:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=84', english:'Domestic/Sikkim-Darjeeling/Sikkim-Darjeeling.jpg', marathi:'Domestic/Sikkim-Darjeeling/Sikkim-Darjeeling(marathi).jpg' },
-  { id:'spiti-valley', en:'Spiti Valley', mr:'स्पिती व्हॅली', thumbnail:img.desert, english:'Domestic/Spiti Valley/spiti valley.jpg', marathi:'Domestic/Spiti Valley/spiti valley(marathi).jpg' },
+  { id:'spiti-valley', en:'Spiti Valley', mr:'स्पिती व्हॅली', thumbnail:assetUrl('assets/Domestic/thumbnails/spiti-valley.png'), english:'Domestic/Spiti Valley/spiti valley.jpg', marathi:'Domestic/Spiti Valley/spiti valley(marathi).jpg' },
 ]
 
 const internationalTrips: ItineraryTrip[] = [
-  { id:'bangkok-pattaya', en:'Bangkok · Pattaya', mr:'बँकॉक · पटाया', thumbnail:'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=900&q=84', english:'International/Bangkok-pattaya/Bangkok-pattaya.jpg', marathi:'International/Bangkok-pattaya/Bangkok-pattaya(marathi).jpg' },
+  { id:'bangkok-pattaya', en:'Bangkok · Pattaya · 4 Nights / 5 Days', mr:'बँकॉक · पटाया · ४ रात्री / ५ दिवस', thumbnail:'https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=900&q=84', english:'International/Bangkok-pattaya/Bangkok-pattaya.jpg', marathi:'International/Bangkok-pattaya/Bangkok-pattaya(marathi).jpg' },
   { id:'bhutan', en:'Bhutan · 6 Nights / 7 Days', mr:'भूतान · ६ रात्री / ७ दिवस', thumbnail:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=900&q=84', english:'International/Bhutan/bhutan(eng).jpg', marathi:'International/Bhutan/bhutan(marathi).jpg' },
-  { id:'cambodia-vietnam', en:'Cambodia · Vietnam', mr:'कंबोडिया · व्हिएतनाम', thumbnail:'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=84', english:'International/Vietnam/vietnam(english).jpg', marathi:'International/Cambodia and vietnam/Cambodia and vietnam.jpg' },
-  { id:'dubai', en:'Dubai · 4 Nights / 5 Days', mr:'दुबई · ४ रात्री / ५ दिवस', thumbnail:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=84', marathi:'International/Dubai/Dubai(marathi).jpg' },
-  { id:'dubai-abu-dhabi', en:'Dubai · Abu Dhabi', mr:'दुबई · अबू धाबी', thumbnail:'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=84', english:'International/Dubai-abudhabi/Dubai-abudhabi(eng).jpg', marathi:'International/Dubai-abudhabi/Dubai-abudhabi.jpg' },
-  { id:'enchanting-vietnam', en:'Enchanting Vietnam · 9 Days', mr:'आकर्षक व्हिएतनाम · ९ दिवस', thumbnail:'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=84', english:'International/Enchanting vietnam and phuc/enchanting vietnam(eng).jpg', marathi:'International/Enchanting vietnam and phuc/enchanting viet.jpg' },
-  { id:'vietnam-phu-quoc', en:'Vietnam · Phu Quoc · 11 Days', mr:'व्हिएतनाम · फु क्वोक · ११ दिवस', thumbnail:'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=84', marathi:'International/Enchanting vietnam and phuc/enchanting vietnam.jpg' },
-  { id:'singapore-malaysia', en:'Singapore · Malaysia · 7 Nights / 8 Days', mr:'सिंगापूर · मलेशिया · ७ रात्री / ८ दिवस', thumbnail:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=900&q=84', english:'International/Singapore & Malaysia/singapore and malayasia(eng).jpg', marathi:'International/Singapore & Malaysia/singapore and malayasia 2.jpg' },
-  { id:'singapore-malaysia-short', en:'Singapore · Malaysia · 5 Nights / 6 Days', mr:'सिंगापूर · मलेशिया · ५ रात्री / ६ दिवस', thumbnail:'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?auto=format&fit=crop&w=900&q=84', marathi:'International/Singapore & Malaysia/Singapore and malaysia(marathi).jpg' },
-  { id:'sri-lanka', en:'Sri Lanka', mr:'श्रीलंका', thumbnail:img.coast, english:'International/Srilanka/srilanka(eng).jpg', marathi:'International/Srilanka/Srilanka.jpg' },
-  { id:'vietnam', en:'Vietnam', mr:'व्हिएतनाम', thumbnail:'https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=900&q=84', marathi:'International/Vietnam/Vietnam marathi.jpg' },
+  { id:'cambodia-vietnam', en:'Cambodia · Vietnam · 10 Nights / 11 Days', mr:'कंबोडिया · व्हिएतनाम · १० रात्री / ११ दिवस', thumbnail:assetUrl('assets/International/thumbnails/cambodia-vietnam.jpg'), english:'International/Vietnam/vietnam(english).jpg', marathi:'International/Cambodia and vietnam/Cambodia and vietnam.jpg' },
+  { id:'dubai', en:'Dubai · 4 Nights / 5 Days', mr:'दुबई · ४ रात्री / ५ दिवस', thumbnail:assetUrl('assets/International/thumbnails/dubai.jpg'), english:'International/Dubai/Dubai 4nights 5days (English).png', marathi:'International/Dubai/Dubai(marathi).jpg' },
+  { id:'dubai-abu-dhabi', en:'Dubai · Abu Dhabi · 5 Nights / 6 Days', mr:'दुबई · अबू धाबी · ५ रात्री / ६ दिवस', thumbnail:assetUrl('assets/International/thumbnails/dubai-abu-dhabi.jpg'), english:'International/Dubai-abudhabi/Dubai-abudhabi(eng).jpg', marathi:'International/Dubai-abudhabi/Dubai-abudhabi.jpg' },
+  { id:'enchanting-vietnam', en:'Enchanting Vietnam · 8 Nights / 9 Days', mr:'एनचॅंटिंग व्हिएतनाम · ८ रात्री / ९ दिवस', thumbnail:assetUrl('assets/International/thumbnails/enchanting-vietnam.jpg'), english:'International/Enchanting vietnam and phuc/enchanting vietnam(eng).jpg', marathi:'International/Enchanting vietnam and phuc/enchanting viet.jpg' },
+  { id:'vietnam-phu-quoc', en:'Vietnam with Phu Quoc · 10 Nights / 11 Days', mr:'फु क्वोकसह व्हिएतनाम · १० रात्री / ११ दिवस', thumbnail:assetUrl('assets/International/thumbnails/vietnam-phu-quoc.jpg'), marathi:'International/Enchanting vietnam and phuc/enchanting vietnam.jpg' },
+  { id:'singapore-malaysia', en:'Singapore · Malaysia · 7 Nights / 8 Days', mr:'सिंगापूर · मलेशिया · ७ रात्री / ८ दिवस', thumbnail:assetUrl('assets/International/thumbnails/singapore-malaysia.jpg'), english:'International/Singapore & Malaysia/singapore and malayasia(eng).jpg', marathi:'International/Singapore & Malaysia/singapore and malayasia 2.jpg' },
+  { id:'singapore-malaysia-short', en:'Singapore · Malaysia · 5 Nights / 6 Days', mr:'सिंगापूर · मलेशिया · ५ रात्री / ६ दिवस', thumbnail:assetUrl('assets/International/thumbnails/singapore-malaysia.jpg'), english:'International/Singapore & Malaysia/Singapore Malaysia 5days 6nights (English).png', marathi:'International/Singapore & Malaysia/Singapore and malaysia(marathi).jpg' },
+  { id:'sri-lanka', en:'Sri Lanka · 5 Nights / 6 Days', mr:'श्रीलंका · ५ रात्री / ६ दिवस', thumbnail:assetUrl('assets/International/thumbnails/sri-lanka.jpg'), english:'International/Srilanka/srilanka(eng).jpg', marathi:'International/Srilanka/Srilanka.jpg' },
+  { id:'vietnam', en:'Vietnam · 6 Nights / 7 Days', mr:'व्हिएतनाम · ६ रात्री / ७ दिवस', thumbnail:assetUrl('assets/International/thumbnails/vietnam.jpg'), english:'International/Vietnam/Vietnam 6days 7nights (English).png', marathi:'International/Vietnam/Vietnam marathi.jpg' },
 ]
 
 const pilgrimageTrips: ItineraryTrip[] = [
   { id:'char-dham', en:'Char Dham Yatra · 11 Nights / 12 Days', mr:'चारधाम यात्रा · ११ रात्री / १२ दिवस', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/char-dham-collage.png'), english:'Pilgrimage/Char Dhaam yatra/Char Dhaam yatra(eng).jpg', marathi:'Pilgrimage/Char Dhaam yatra/Char Dhaam yatra(marathi).jpg' },
-  { id:'kashi-prayagraj-ayodhya', en:'Kashi · Prayagraj · Ayodhya', mr:'काशी · प्रयागराज · अयोध्या', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/ayodhya-ram-mandir.png'), english:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(eng).jpg', marathi:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(marathi).jpg' },
+  { id:'kashi-prayagraj-ayodhya', en:'Kashi · Prayagraj · Ayodhya', mr:'काशी · प्रयागराज · अयोध्या', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/ayodhya-ram-mandir.png'), english:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-prayagraj-ayoydhya(eng).jpg', marathi:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(marathi).jpg' },
   { id:'kashi-prayagraj-ayodhya-gaya', en:'Kashi · Prayagraj · Ayodhya · Gaya', mr:'काशी · प्रयागराज · अयोध्या · गया', thumbnail:destinationImages.pilgrimage[1], english:'Pilgrimage/Kashi-prayagraj-ayoydhya-gaya/Kashi-prayagraj-ayoydhya-gaya(eng).jpg', marathi:'Pilgrimage/Kashi-prayagraj-ayoydhya-gaya/Kashi-prayagraj-ayoydhya-gaya.jpg' },
   { id:'kashi-prayagraj-ayodhya-chitrakoot', en:'Kashi · Prayagraj · Ayodhya · Chitrakoot', mr:'काशी · प्रयागराज · अयोध्या · चित्रकूट', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/varanasi-ghats.png'), english:'Pilgrimage/Kashi-praygraj-ayoydhya-chitrakoot/Kashi-praygraj-ayoydhya-chitrakoot(eng).jpg', marathi:'Pilgrimage/Kashi-praygraj-ayoydhya-chitrakoot/Kashi-praygraj-ayoydhya-chitrakoot(marathi).jpg' },
 ]
@@ -351,7 +365,7 @@ function Destinations({ language }: { language: Language }) {
       <div className="destination-tab-panel" id="destination-tab-panel" role="tabpanel" aria-labelledby={`destination-tab-${activeCategory}`}>
         {activeCategory === 'domestic' && <ItineraryGallery language={language} t={t} trips={domesticTrips} title={t.domestic} text={t.domesticText} />}
         {activeCategory === 'international' && <ItineraryGallery language={language} t={t} trips={internationalTrips} title={t.international} text={t.internationalText} />}
-        {activeCategory === 'mice' && <section className="destination-group"><div className="destination-group__heading"><h2>{t.corporate}</h2><p>{t.corporateText}</p></div><div className="destination-grid">{names.corporate.map((name, index) => <article className="destination-card" key={name}><img src={destinationImages.corporate[index]} alt={name} loading="lazy" /><div className="destination-card__shade" /><h3>{name}</h3></article>)}</div></section>}
+        {activeCategory === 'mice' && <section className="destination-group"><div className="mice-coming-soon" role="status"><span className="kicker">{t.corporate}</span><h2>{t.comingSoon}</h2><p>{t.corporateText}</p></div></section>}
         {activeCategory === 'pilgrimage' && <ItineraryGallery language={language} t={t} trips={pilgrimageTrips} title={t.pilgrimage} text={t.pilgrimageText} />}
       </div>
     </div>
@@ -360,9 +374,26 @@ function Destinations({ language }: { language: Language }) {
 
 function About({ language }: { language: Language }) {
   const t = content[language]
+  const stats = [
+    { value: t.travellersValue, label: t.travellersLabel, copy: t.travellersCopy },
+    { value: t.monthsValue, label: t.monthsLabel, copy: t.monthsCopy },
+    { value: t.corporateValue, label: t.corporateLabel, copy: t.corporateCopy },
+    { value: t.futureValue, label: t.futureLabel, copy: t.futureCopy },
+  ]
   return <main>
-    <section className="about-hero"><div className="about-hero__copy"><Heading kicker={t.aboutKicker} title={t.aboutTitle} text={t.aboutIntro} /><span className="placeholder-tag">{t.placeholder}</span></div><div className="about-hero__image"><img src={img.bali} alt="Temple by a calm lake in Bali" /><span>Arth Travels</span></div></section>
-    <section className="approach section"><div className="approach__mark"><Brand compact /></div><div><span className="kicker">{t.placeholder}</span><h2>{t.approachTitle}</h2><p>{t.approachText}</p></div></section>
+    <section className="founder-feature section">
+      <div className="founder-gallery" aria-label={language === 'en' ? 'Photos of Anand Dave' : 'Anand Dave यांची छायाचित्रे'}>
+        <figure className="founder-gallery__main"><img src={assetUrl('assets/founder photos/1.jpg')} alt={language === 'en' ? 'Anand Dave seated at a public event' : 'सार्वजनिक कार्यक्रमात बसलेले Anand Dave'} /><figcaption><strong>Anand Dave</strong><span>{language === 'en' ? 'Founder, Arth Travels' : 'संस्थापक, Arth Travels'}</span></figcaption></figure>
+        <div className="founder-gallery__secondary">
+          <figure><img src={assetUrl('assets/founder photos/3.jpg')} alt={language === 'en' ? 'Anand Dave addressing an audience' : 'श्रोत्यांना संबोधित करताना Anand Dave'} /><figcaption>{language === 'en' ? 'Sharing ideas with an audience' : 'श्रोत्यांशी विचारांची देवाणघेवाण'}</figcaption></figure>
+          <figure><img src={assetUrl('assets/founder photos/5.jpg')} alt={language === 'en' ? 'Anand Dave at a public recognition event' : 'सार्वजनिक सत्कार समारंभात Anand Dave'} /><figcaption>{language === 'en' ? 'A moment from a community event' : 'समुदायिक कार्यक्रमातील एक क्षण'}</figcaption></figure>
+        </div>
+      </div>
+      <div className="founder-feature__copy"><span className="kicker">{t.founderKicker}</span><h2>{t.founderName}</h2><span className="founder-feature__role">{t.founderRole}</span><p>{t.founderBio}</p>
+        <aside className="founder-feature__story"><span>{t.storyKicker}</span><h3>{t.storyTitle}</h3><p>{t.storyText}</p></aside>
+      </div>
+    </section>
+    <section className="journey-stats-wrap"><div className="journey-stats"><span className="journey-stats__kicker">{t.journeyKicker}</span><div className="journey-stats__grid">{stats.map(stat => <article className="journey-stat" key={stat.label}><strong>{stat.value}</strong><h3>{stat.label}</h3><p>{stat.copy}</p></article>)}</div><div className="journey-stats__footer">{t.journeyTitle}</div></div></section>
   </main>
 }
 
@@ -379,7 +410,7 @@ function Contact({ language }: { language: Language }) {
 }
 
 function Memories({ language }: { language: Language }) {
-  const t = content[language], videos = [4, 5, 6, 7]
+  const t = content[language], videos = Array.from({ length: 16 }, (_, index) => index + 4)
   return <main>
     <section className="page-intro memories-intro"><Heading kicker={t.memoriesKicker} title={t.memoriesTitle} text={t.memoriesText} center /></section>
     <section className="memory-video-collection section"><div className="gallery-heading"><h2>{t.videoCollection}</h2><span>{t.videoCount}</span></div><div className="memory-video-grid">{videos.map((number, index) => {
