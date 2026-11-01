@@ -4,6 +4,7 @@ type Language = 'en' | 'mr'
 type Page = 'home' | 'destinations' | 'about' | 'contact' | 'memories'
 
 const COMPANY = { phoneDisplay: '+91 98221 76664', phone: '+919822176664', whatsapp: '919822176664' }
+const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${encodeURI(path.replace(/^\/+/, ''))}`
 
 const img = {
   hero: 'https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=1800&q=88',
@@ -172,15 +173,15 @@ const internationalTrips: ItineraryTrip[] = [
 ]
 
 const pilgrimageTrips: ItineraryTrip[] = [
-  { id:'char-dham', en:'Char Dham Yatra · 11 Nights / 12 Days', mr:'चारधाम यात्रा · ११ रात्री / १२ दिवस', thumbnail:'/assets/Pilgrimage/thumbnails/char-dham-collage.png', english:'Pilgrimage/Char Dhaam yatra/Char Dhaam yatra(eng).jpg', marathi:'Pilgrimage/Char Dhaam yatra/Char Dhaam yatra(marathi).jpg' },
-  { id:'kashi-prayagraj-ayodhya', en:'Kashi · Prayagraj · Ayodhya', mr:'काशी · प्रयागराज · अयोध्या', thumbnail:'/assets/Pilgrimage/thumbnails/ayodhya-ram-mandir.png', english:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(eng).jpg', marathi:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(marathi).jpg' },
+  { id:'char-dham', en:'Char Dham Yatra · 11 Nights / 12 Days', mr:'चारधाम यात्रा · ११ रात्री / १२ दिवस', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/char-dham-collage.png'), english:'Pilgrimage/Char Dhaam yatra/Char Dhaam yatra(eng).jpg', marathi:'Pilgrimage/Char Dhaam yatra/Char Dhaam yatra(marathi).jpg' },
+  { id:'kashi-prayagraj-ayodhya', en:'Kashi · Prayagraj · Ayodhya', mr:'काशी · प्रयागराज · अयोध्या', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/ayodhya-ram-mandir.png'), english:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(eng).jpg', marathi:'Pilgrimage/Kashi-prayagraj-ayoydhya/Kashi-praygraj-ayoydhya(marathi).jpg' },
   { id:'kashi-prayagraj-ayodhya-gaya', en:'Kashi · Prayagraj · Ayodhya · Gaya', mr:'काशी · प्रयागराज · अयोध्या · गया', thumbnail:destinationImages.pilgrimage[1], english:'Pilgrimage/Kashi-prayagraj-ayoydhya-gaya/Kashi-prayagraj-ayoydhya-gaya(eng).jpg', marathi:'Pilgrimage/Kashi-prayagraj-ayoydhya-gaya/Kashi-prayagraj-ayoydhya-gaya.jpg' },
-  { id:'kashi-prayagraj-ayodhya-chitrakoot', en:'Kashi · Prayagraj · Ayodhya · Chitrakoot', mr:'काशी · प्रयागराज · अयोध्या · चित्रकूट', thumbnail:'/assets/Pilgrimage/thumbnails/varanasi-ghats.png', english:'Pilgrimage/Kashi-praygraj-ayoydhya-chitrakoot/Kashi-praygraj-ayoydhya-chitrakoot(eng).jpg', marathi:'Pilgrimage/Kashi-praygraj-ayoydhya-chitrakoot/Kashi-praygraj-ayoydhya-chitrakoot(marathi).jpg' },
+  { id:'kashi-prayagraj-ayodhya-chitrakoot', en:'Kashi · Prayagraj · Ayodhya · Chitrakoot', mr:'काशी · प्रयागराज · अयोध्या · चित्रकूट', thumbnail:assetUrl('assets/Pilgrimage/thumbnails/varanasi-ghats.png'), english:'Pilgrimage/Kashi-praygraj-ayoydhya-chitrakoot/Kashi-praygraj-ayoydhya-chitrakoot(eng).jpg', marathi:'Pilgrimage/Kashi-praygraj-ayoydhya-chitrakoot/Kashi-praygraj-ayoydhya-chitrakoot(marathi).jpg' },
 ]
 
 function itineraryFor(trip: ItineraryTrip, language: Language) {
   const path = language === 'mr' ? (trip.marathi || trip.english) : (trip.english || trip.marathi)
-  return path ? `/assets/${encodeURI(path)}` : ''
+  return path ? assetUrl(`assets/${path}`) : ''
 }
 
 function getPage(): Page {
@@ -195,7 +196,7 @@ function Arrow() { return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M
 
 function Brand({ compact = false }: { compact?: boolean }) {
   return <Link page="home" className={`brand ${compact ? 'brand--compact' : ''}`}>
-    <span className="brand__mark"><img src="/assets/client-logo.png" alt="" /></span>
+    <span className="brand__mark"><img src={assetUrl('assets/client-logo.png')} alt="" /></span>
     <span className="brand__type"><strong>Arth</strong><small>Travels</small></span>
   </Link>
 }
@@ -266,7 +267,7 @@ function TravelVideoCarousel({ language }: { language: Language }) {
     {videos.map((number, index) => <article className="home-memory-videos__card" key={number}>
       <div className="home-memory-videos__frame">
         <video ref={element => { videoRefs.current[index] = element }} controls autoPlay muted={index !== 0} loop preload={index === 0 ? 'auto' : 'metadata'} playsInline aria-label={t.homeMemoryTitles[index]}>
-          <source src={`/assets/Travel%20memories/${number}.mp4`} type="video/mp4" />
+          <source src={assetUrl(`assets/Travel memories/${number}.mp4`)} type="video/mp4" />
           {t.videoPlaceholder}
         </video>
         {index === 0 && playbackBlocked && <button className="travel-video-carousel__sound" onClick={playWithSound}>{t.playWithSound}</button>}
@@ -382,7 +383,7 @@ function Memories({ language }: { language: Language }) {
   return <main>
     <section className="page-intro memories-intro"><Heading kicker={t.memoriesKicker} title={t.memoriesTitle} text={t.memoriesText} center /></section>
     <section className="memory-video-collection section"><div className="gallery-heading"><h2>{t.videoCollection}</h2><span>{t.videoCount}</span></div><div className="memory-video-grid">{videos.map((number, index) => {
-      const video = `/assets/Travel%20memories/${number === 5 ? '5%20(1)' : number}.mp4`
+      const video = assetUrl(`assets/Travel memories/${number === 5 ? '5 (1)' : number}.mp4`)
       const title = t.memoryVideoTitles[index]
       return <article className="memory-video-card" key={number}><video controls preload="metadata" playsInline aria-label={title}><source src={video} type="video/mp4" />{t.videoPlaceholder}</video><div className="memory-video-card__caption"><span>{String(number).padStart(2, '0')}</span><h3>{title}</h3></div></article>
     })}</div></section>
@@ -407,6 +408,6 @@ export default function App() {
       {page === 'home' && <Home language={language} />}{page === 'destinations' && <Destinations language={language} />}{page === 'about' && <About language={language} />}{page === 'contact' && <Contact language={language} />}{page === 'memories' && <Memories language={language} />}
       <Footer language={language} />
     </div>
-    {showLoader && <div className="site-loader" role="status" aria-label="Loading Arth Travels"><div className="site-loader__mark"><img src="/assets/client-logo.png" alt="Arth Travels" /></div><span className="site-loader__name">Arth Travels</span><span className="site-loader__line" /></div>}
+    {showLoader && <div className="site-loader" role="status" aria-label="Loading Arth Travels"><div className="site-loader__mark"><img src={assetUrl('assets/client-logo.png')} alt="Arth Travels" /></div><span className="site-loader__name">Arth Travels</span><span className="site-loader__line" /></div>}
   </>
 }

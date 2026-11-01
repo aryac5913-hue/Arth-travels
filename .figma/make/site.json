@@ -2,10 +2,10 @@
   "title": "Arth Travels — Thoughtful Journeys",
   "description": "Explore travel destinations, learn about Arth Travels, and browse customer memories, with easy contact options and English or Marathi navigation.",
   "icons": {
-    "icon": "/assets/client-logo.png"
+    "icon": "assets/client-logo.png"
   },
   "robots": {
-    "index": false
+    "index": true
   },
   "accessibility": {
     "addBypassLinks": false,
