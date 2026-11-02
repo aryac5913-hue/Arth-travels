@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import AdminDashboard, { createAdminSeed } from './AdminDashboard'
+import { fetchPublishedTrips, getPublicFile, supabaseReady, type ManagedTrip, type TripCategory } from './lib/supabase'
 
 type Language = 'en' | 'mr'
-type Page = 'home' | 'destinations' | 'about' | 'contact' | 'memories'
+type Page = 'home' | 'destinations' | 'about' | 'contact' | 'memories' | 'admin'
 
 const COMPANY = { phoneDisplay: '+91 98221 76664', phone: '+919822176664', whatsapp: '919822176664' }
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${encodeURI(path.replace(/^\/+/, ''))}`
@@ -150,7 +152,7 @@ const destinationImages = {
   ],
 }
 
-type ItineraryTrip = { id: string; en: string; mr: string; thumbnail: string; english?: string; marathi?: string }
+type ItineraryTrip = { id: string; en: string; mr: string; thumbnail: string; english?: string; marathi?: string; published?: boolean; category?: TripCategory }
 const domesticTrips: ItineraryTrip[] = [
   { id:'three-sisters', en:'Three Sisters · Assam, Meghalaya & Arunachal Pradesh', mr:'तीन भगिनी · आसाम, मेघालय आणि अरुणाचल प्रदेश', thumbnail:assetUrl('assets/Domestic/thumbnails/three-sisters.png'), english:'Domestic/3 sisters/3 sisters.jpg', marathi:'Domestic/3 sisters/3 sisters(marathi).jpg' },
   { id:'andaman-nicobar', en:'Andaman & Nicobar Islands', mr:'अंदमान आणि निकोबार बेटे', thumbnail:assetUrl('assets/Domestic/thumbnails/andaman-nicobar.png'), english:'Domestic/Andaman and Nicobar/Andaman and nicobar(eng).jpg', marathi:'Domestic/Andaman and Nicobar/Anadaman and nicobar(marathi).jpg' },
@@ -195,12 +197,34 @@ const pilgrimageTrips: ItineraryTrip[] = [
 
 function itineraryFor(trip: ItineraryTrip, language: Language) {
   const path = language === 'mr' ? (trip.marathi || trip.english) : (trip.english || trip.marathi)
-  return path ? assetUrl(`assets/${path}`) : ''
+  return path ? (/^https?:\/\//i.test(path) ? path : assetUrl(`assets/${path}`)) : ''
+}
+
+function managedTripToDisplay(trip: ManagedTrip): ItineraryTrip {
+  return {
+    id: trip.id, en: trip.name_en, mr: trip.name_mr || trip.name_en,
+    thumbnail: getPublicFile(trip.thumbnail_path),
+    english: getPublicFile(trip.itinerary_en_path), marathi: getPublicFile(trip.itinerary_mr_path),
+    published: trip.published, category: trip.category,
+  }
+}
+
+function mergeManagedTrips(defaults: ItineraryTrip[], managed: ManagedTrip[], category: TripCategory) {
+  const saved = new Map(managed.filter(item => item.category === category).map(item => [item.id, item]))
+  const seen = new Set<string>()
+  const output = defaults.flatMap(item => {
+    seen.add(item.id)
+    const replacement = saved.get(item.id)
+    if (replacement) return replacement.published ? [managedTripToDisplay(replacement)] : []
+    return [item]
+  })
+  for (const item of managed) if (item.category === category && item.published && !seen.has(item.id)) output.push(managedTripToDisplay(item))
+  return output
 }
 
 function getPage(): Page {
   const page = window.location.hash.replace('#/', '') as Page
-  return ['home', 'destinations', 'about', 'contact', 'memories'].includes(page) ? page : 'home'
+  return ['home', 'destinations', 'about', 'contact', 'memories', 'admin'].includes(page) ? page : 'home'
 }
 
 function Link({ page, className = '', children, onClick }: { page: Page; className?: string; children: React.ReactNode; onClick?: () => void }) {
@@ -345,8 +369,11 @@ function ItineraryGallery({ language, t, trips, title, text }: { language: Langu
   </>
 }
 
-function Destinations({ language }: { language: Language }) {
+function Destinations({ language, managedTrips }: { language: Language; managedTrips: ManagedTrip[] }) {
   const t = content[language], names = destinationNames[language]
+  const domestic = mergeManagedTrips(domesticTrips, managedTrips, 'domestic')
+  const international = mergeManagedTrips(internationalTrips, managedTrips, 'international')
+  const pilgrimage = mergeManagedTrips(pilgrimageTrips, managedTrips, 'pilgrimage')
   const [activeCategory, setActiveCategory] = useState<'domestic' | 'international' | 'mice' | 'pilgrimage'>('domestic')
   const categories = [
     { id:'domestic' as const, label:t.domestic },
@@ -363,10 +390,10 @@ function Destinations({ language }: { language: Language }) {
         </button>)}
       </div>
       <div className="destination-tab-panel" id="destination-tab-panel" role="tabpanel" aria-labelledby={`destination-tab-${activeCategory}`}>
-        {activeCategory === 'domestic' && <ItineraryGallery language={language} t={t} trips={domesticTrips} title={t.domestic} text={t.domesticText} />}
-        {activeCategory === 'international' && <ItineraryGallery language={language} t={t} trips={internationalTrips} title={t.international} text={t.internationalText} />}
+        {activeCategory === 'domestic' && <ItineraryGallery language={language} t={t} trips={domestic} title={t.domestic} text={t.domesticText} />}
+        {activeCategory === 'international' && <ItineraryGallery language={language} t={t} trips={international} title={t.international} text={t.internationalText} />}
         {activeCategory === 'mice' && <section className="destination-group"><div className="mice-coming-soon" role="status"><span className="kicker">{t.corporate}</span><h2>{t.comingSoon}</h2><p>{t.corporateText}</p></div></section>}
-        {activeCategory === 'pilgrimage' && <ItineraryGallery language={language} t={t} trips={pilgrimageTrips} title={t.pilgrimage} text={t.pilgrimageText} />}
+        {activeCategory === 'pilgrimage' && <ItineraryGallery language={language} t={t} trips={pilgrimage} title={t.pilgrimage} text={t.pilgrimageText} />}
       </div>
     </div>
   </main>
@@ -423,6 +450,7 @@ function Memories({ language }: { language: Language }) {
 
 export default function App() {
   const [page, setPage] = useState<Page>(getPage)
+  const [managedTrips, setManagedTrips] = useState<ManagedTrip[]>([])
   const [language, setLanguageState] = useState<Language>(() => localStorage.getItem('earther-language') === 'mr' ? 'mr' : 'en')
   const [showLoader, setShowLoader] = useState(true)
   useEffect(() => {
@@ -430,13 +458,23 @@ export default function App() {
     addEventListener('hashchange', update); return () => removeEventListener('hashchange', update)
   }, [])
   useEffect(() => {
+    if (!supabaseReady) return
+    fetchPublishedTrips().then(setManagedTrips).catch(error => console.error('Could not load managed trips:', error))
+  }, [])
+  useEffect(() => {
     const timer = window.setTimeout(() => setShowLoader(false), 1000)
     return () => window.clearTimeout(timer)
   }, [])
   const setLanguage = (next: Language) => { setLanguageState(next); localStorage.setItem('earther-language', next); document.documentElement.lang = next }
+  const adminInitialTrips = createAdminSeed([
+    { category: 'domestic', items: domesticTrips },
+    { category: 'international', items: internationalTrips },
+    { category: 'pilgrimage', items: pilgrimageTrips },
+  ])
+  if (page === 'admin') return <AdminDashboard initialTrips={adminInitialTrips} />
   return <>
     <div className="site-shell"><Header language={language} setLanguage={setLanguage} page={page} />
-      {page === 'home' && <Home language={language} />}{page === 'destinations' && <Destinations language={language} />}{page === 'about' && <About language={language} />}{page === 'contact' && <Contact language={language} />}{page === 'memories' && <Memories language={language} />}
+      {page === 'home' && <Home language={language} />}{page === 'destinations' && <Destinations language={language} managedTrips={managedTrips} />}{page === 'about' && <About language={language} />}{page === 'contact' && <Contact language={language} />}{page === 'memories' && <Memories language={language} />}
       <Footer language={language} />
     </div>
     {showLoader && <div className="site-loader" role="status" aria-label="Loading Arth Travels"><div className="site-loader__mark"><img src={assetUrl('assets/client-logo.png')} alt="Arth Travels" /></div><span className="site-loader__name">Arth Travels</span><span className="site-loader__line" /></div>}
