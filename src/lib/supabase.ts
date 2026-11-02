@@ -1,4 +1,4 @@
-export type TripCategory = 'domestic' | 'international' | 'pilgrimage'
+export type TripCategory = 'domestic' | 'international' | 'mice' | 'pilgrimage'
 
 export type ManagedTrip = {
   id: string
@@ -8,6 +8,16 @@ export type ManagedTrip = {
   thumbnail_path: string
   itinerary_en_path: string | null
   itinerary_mr_path: string | null
+  published: boolean
+  sort_order: number
+  created_at?: string
+}
+
+export type ManagedMemory = {
+  id: string
+  title_en: string
+  title_mr: string
+  video_path: string
   published: boolean
   sort_order: number
   created_at?: string
@@ -92,9 +102,34 @@ export async function deleteTrip(id: string, token: string) {
   return request<void>(`/rest/v1/trips?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE' }, token)
 }
 
-export async function uploadFile(file: File, token: string) {
+export async function fetchMemories(): Promise<ManagedMemory[]> {
+  if (!supabaseReady) return []
+  return request<ManagedMemory[]>('/rest/v1/travel_memories?select=*&order=sort_order.asc,created_at.desc')
+}
+
+export async function fetchAdminMemories(token: string): Promise<ManagedMemory[]> {
+  return request<ManagedMemory[]>('/rest/v1/travel_memories?select=*&order=sort_order.asc,created_at.desc', {}, token)
+}
+
+export async function saveMemory(memory: Omit<ManagedMemory, 'created_at'>, token: string) {
+  return request<ManagedMemory[]>('/rest/v1/travel_memories?on_conflict=id', {
+    method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=representation' }, body: JSON.stringify(memory),
+  }, token)
+}
+
+export async function deleteMemory(id: string, token: string) {
+  return request<void>(`/rest/v1/travel_memories?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE' }, token)
+}
+
+export async function deleteUploadedFile(path: string | null | undefined, token: string) {
+  if (!path || path.startsWith('site-assets:') || /^https?:\/\//i.test(path)) return
+  await request(`/storage/v1/object/trip-media/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }, token)
+}
+
+export async function uploadFile(file: File, token: string, folder = 'trips') {
+  if (file.size > 50 * 1024 * 1024) throw new Error('File is larger than the 50 MB upload limit.')
   const safeName = file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'upload'
-  const path = `trips/${crypto.randomUUID()}-${safeName}`
+  const path = `${folder}/${crypto.randomUUID()}-${safeName}`
   await request(`/storage/v1/object/trip-media/${path.split('/').map(encodeURIComponent).join('/')}`, {
     method: 'POST', headers: { 'Content-Type': file.type || 'application/octet-stream', 'x-upsert': 'false' }, body: file,
   }, token)

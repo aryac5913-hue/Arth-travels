@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import AdminDashboard, { createAdminSeed } from './AdminDashboard'
-import { fetchPublishedTrips, getPublicFile, supabaseReady, type ManagedTrip, type TripCategory } from './lib/supabase'
+import { fetchMemories, fetchPublishedTrips, getPublicFile, supabaseReady, type ManagedMemory, type ManagedTrip, type TripCategory } from './lib/supabase'
 
 type Language = 'en' | 'mr'
 type Page = 'home' | 'destinations' | 'about' | 'contact' | 'memories' | 'admin'
@@ -210,12 +210,12 @@ function managedTripToDisplay(trip: ManagedTrip): ItineraryTrip {
 }
 
 function mergeManagedTrips(defaults: ItineraryTrip[], managed: ManagedTrip[], category: TripCategory) {
-  const saved = new Map(managed.filter(item => item.category === category).map(item => [item.id, item]))
+  const saved = new Map(managed.map(item => [item.id, item]))
   const seen = new Set<string>()
   const output = defaults.flatMap(item => {
     seen.add(item.id)
     const replacement = saved.get(item.id)
-    if (replacement) return replacement.published ? [managedTripToDisplay(replacement)] : []
+    if (replacement) return replacement.category === category && replacement.published ? [managedTripToDisplay(replacement)] : []
     return [item]
   })
   for (const item of managed) if (item.category === category && item.published && !seen.has(item.id)) output.push(managedTripToDisplay(item))
@@ -392,7 +392,7 @@ function Destinations({ language, managedTrips }: { language: Language; managedT
       <div className="destination-tab-panel" id="destination-tab-panel" role="tabpanel" aria-labelledby={`destination-tab-${activeCategory}`}>
         {activeCategory === 'domestic' && <ItineraryGallery language={language} t={t} trips={domestic} title={t.domestic} text={t.domesticText} />}
         {activeCategory === 'international' && <ItineraryGallery language={language} t={t} trips={international} title={t.international} text={t.internationalText} />}
-        {activeCategory === 'mice' && <section className="destination-group"><div className="mice-coming-soon" role="status"><span className="kicker">{t.corporate}</span><h2>{t.comingSoon}</h2><p>{t.corporateText}</p></div></section>}
+        {activeCategory === 'mice' && (mergeManagedTrips([], managedTrips, 'mice').length ? <ItineraryGallery language={language} t={t} trips={mergeManagedTrips([], managedTrips, 'mice')} title={t.corporate} text={language === 'en' ? 'Corporate journeys, meetings and group experiences planned around your team.' : 'तुमच्या टीमसाठी नियोजित कॉर्पोरेट सहली, बैठका आणि समूह अनुभव.'} /> : <section className="destination-group"><div className="mice-coming-soon" role="status"><span className="kicker">{t.corporate}</span><h2>{t.comingSoon}</h2><p>{t.corporateText}</p></div></section>)}
         {activeCategory === 'pilgrimage' && <ItineraryGallery language={language} t={t} trips={pilgrimage} title={t.pilgrimage} text={t.pilgrimageText} />}
       </div>
     </div>
@@ -436,14 +436,28 @@ function Contact({ language }: { language: Language }) {
   </section></main>
 }
 
-function Memories({ language }: { language: Language }) {
-  const t = content[language], videos = Array.from({ length: 16 }, (_, index) => index + 4)
+type MemoryView = { id: string; title_en: string; title_mr: string; video_path: string; published: boolean; sort_order: number }
+
+function mergeManagedMemories(defaults: MemoryView[], saved: ManagedMemory[]): MemoryView[] {
+  const managed = new Map(saved.map(item => [item.id, item]))
+  const seen = new Set<string>()
+  const output = defaults.flatMap(item => {
+    seen.add(item.id)
+    const replacement = managed.get(item.id)
+    return replacement ? replacement.published ? [{ ...replacement }] : [] : [item]
+  })
+  for (const item of saved) if (item.published && !seen.has(item.id)) output.push(item)
+  return output.sort((a, b) => a.sort_order - b.sort_order || a.title_en.localeCompare(b.title_en))
+}
+
+function Memories({ language, memories }: { language: Language; memories: MemoryView[] }) {
+  const t = content[language], videos = memories.filter(video => video.published)
   return <main>
     <section className="page-intro memories-intro"><Heading kicker={t.memoriesKicker} title={t.memoriesTitle} text={t.memoriesText} center /></section>
-    <section className="memory-video-collection section"><div className="gallery-heading"><h2>{t.videoCollection}</h2><span>{t.videoCount}</span></div><div className="memory-video-grid">{videos.map((number, index) => {
-      const video = assetUrl(`assets/Travel memories/${number === 5 ? '5 (1)' : number}.mp4`)
-      const title = t.memoryVideoTitles[index]
-      return <article className="memory-video-card" key={number}><video controls preload="metadata" playsInline aria-label={title}><source src={video} type="video/mp4" />{t.videoPlaceholder}</video><div className="memory-video-card__caption"><span>{String(number).padStart(2, '0')}</span><h3>{title}</h3></div></article>
+    <section className="memory-video-collection section"><div className="gallery-heading"><h2>{t.videoCollection}</h2><span>{videos.length} {language === 'en' ? 'videos' : 'व्हिडिओ'}</span></div><div className="memory-video-grid">{videos.map((memory, index) => {
+      const video = getPublicFile(memory.video_path)
+      const title = language === 'mr' ? (memory.title_mr || memory.title_en) : memory.title_en
+      return <article className="memory-video-card" key={memory.id}><video controls preload="metadata" playsInline aria-label={title}><source src={video} type="video/mp4" />{t.videoPlaceholder}</video><div className="memory-video-card__caption"><span>{String(index + 1).padStart(2, '0')}</span><h3>{title}</h3></div></article>
     })}</div></section>
   </main>
 }
@@ -451,6 +465,7 @@ function Memories({ language }: { language: Language }) {
 export default function App() {
   const [page, setPage] = useState<Page>(getPage)
   const [managedTrips, setManagedTrips] = useState<ManagedTrip[]>([])
+  const [managedMemories, setManagedMemories] = useState<ManagedMemory[]>([])
   const [language, setLanguageState] = useState<Language>(() => localStorage.getItem('earther-language') === 'mr' ? 'mr' : 'en')
   const [showLoader, setShowLoader] = useState(true)
   useEffect(() => {
@@ -459,7 +474,7 @@ export default function App() {
   }, [])
   useEffect(() => {
     if (!supabaseReady) return
-    fetchPublishedTrips().then(setManagedTrips).catch(error => console.error('Could not load managed trips:', error))
+    Promise.all([fetchPublishedTrips(), fetchMemories()]).then(([trips, videos]) => { setManagedTrips(trips); setManagedMemories(videos) }).catch(error => console.error('Could not load managed travel content:', error))
   }, [])
   useEffect(() => {
     const timer = window.setTimeout(() => setShowLoader(false), 1000)
@@ -471,10 +486,16 @@ export default function App() {
     { category: 'international', items: internationalTrips },
     { category: 'pilgrimage', items: pilgrimageTrips },
   ])
-  if (page === 'admin') return <AdminDashboard initialTrips={adminInitialTrips} />
+  const adminInitialMemories = Array.from({ length: 16 }, (_, index) => {
+    const number = index + 4
+    const filename = number === 5 ? '5 (1)' : String(number)
+    return { id: `memory-${number}`, title_en: content.en.memoryVideoTitles[index], title_mr: content.mr.memoryVideoTitles[index], video_path: `assets/Travel memories/${filename}.mp4`, sort_order: index * 10 }
+  })
+  const memoriesForDisplay = mergeManagedMemories(adminInitialMemories.map(memory => ({ ...memory, video_path: `site-assets:${memory.video_path}`, published: true })), managedMemories)
+  if (page === 'admin') return <AdminDashboard initialTrips={adminInitialTrips} initialMemories={adminInitialMemories.map(memory => ({ ...memory, video_path: `site-assets:${memory.video_path}`, published: true }))} />
   return <>
     <div className="site-shell"><Header language={language} setLanguage={setLanguage} page={page} />
-      {page === 'home' && <Home language={language} />}{page === 'destinations' && <Destinations language={language} managedTrips={managedTrips} />}{page === 'about' && <About language={language} />}{page === 'contact' && <Contact language={language} />}{page === 'memories' && <Memories language={language} />}
+      {page === 'home' && <Home language={language} />}{page === 'destinations' && <Destinations language={language} managedTrips={managedTrips} />}{page === 'about' && <About language={language} />}{page === 'contact' && <Contact language={language} />}{page === 'memories' && <Memories language={language} memories={memoriesForDisplay} />}
       <Footer language={language} />
     </div>
     {showLoader && <div className="site-loader" role="status" aria-label="Loading Arth Travels"><div className="site-loader__mark"><img src={assetUrl('assets/client-logo.png')} alt="Arth Travels" /></div><span className="site-loader__name">Arth Travels</span><span className="site-loader__line" /></div>}

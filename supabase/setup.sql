@@ -1,7 +1,7 @@
 -- Run once in Supabase Dashboard → SQL Editor → New query.
 create table if not exists public.trips (
   id text primary key,
-  category text not null check (category in ('domestic', 'international', 'pilgrimage')),
+  category text not null check (category in ('domestic', 'international', 'mice', 'pilgrimage')),
   name_en text not null,
   name_mr text not null default '',
   thumbnail_path text not null,
@@ -11,6 +11,10 @@ create table if not exists public.trips (
   sort_order integer not null default 100,
   created_at timestamptz not null default now()
 );
+
+alter table public.trips drop constraint if exists trips_category_check;
+alter table public.trips add constraint trips_category_check
+  check (category in ('domestic', 'international', 'mice', 'pilgrimage'));
 
 alter table public.trips enable row level security;
 
@@ -44,10 +48,28 @@ drop policy if exists "Signed-in admins can manage trips" on public.trips;
 create policy "Allowlisted admins can manage trips" on public.trips
   for all to authenticated using (public.is_arth_admin()) with check (public.is_arth_admin());
 
+create table if not exists public.travel_memories (
+  id text primary key,
+  title_en text not null,
+  title_mr text not null default '',
+  video_path text not null,
+  published boolean not null default true,
+  sort_order integer not null default 999,
+  created_at timestamptz not null default now()
+);
+alter table public.travel_memories enable row level security;
+
+drop policy if exists "Anyone can read travel memories" on public.travel_memories;
+create policy "Anyone can read travel memories" on public.travel_memories
+  for select using (true);
+drop policy if exists "Allowlisted admins can manage travel memories" on public.travel_memories;
+create policy "Allowlisted admins can manage travel memories" on public.travel_memories
+  for all to authenticated using (public.is_arth_admin()) with check (public.is_arth_admin());
+
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('trip-media', 'trip-media', true, 20971520, array['image/jpeg','image/png','image/webp','image/avif','application/pdf'])
-on conflict (id) do update set public = true, file_size_limit = 20971520,
-  allowed_mime_types = array['image/jpeg','image/png','image/webp','image/avif','application/pdf'];
+values ('trip-media', 'trip-media', true, 52428800, array['image/jpeg','image/png','image/webp','image/avif','video/mp4'])
+on conflict (id) do update set public = true, file_size_limit = 52428800,
+  allowed_mime_types = array['image/jpeg','image/png','image/webp','image/avif','video/mp4'];
 
 drop policy if exists "Public can view trip media" on storage.objects;
 create policy "Public can view trip media" on storage.objects for select
