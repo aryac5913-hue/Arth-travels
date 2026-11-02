@@ -177,9 +177,11 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
     </nav>
     {section === 'trips' ? <div className="admin-layout"><section className="admin-list"><div className="admin-list__top"><div><span className="admin-kicker">Tour library · lower sort numbers appear first</span><h2>{combinedRows.length} destinations</h2></div><button className="admin-primary" onClick={startNew}>＋ Add destination</button></div>
       <input className="admin-search" type="search" placeholder="Search destinations" value={query} onChange={e => setQuery(e.target.value)} />
-      <div className="admin-trip-list">{combinedRows.map(trip => <button className={`admin-trip ${form.id === trip.id ? 'is-selected' : ''}`} key={trip.id} onClick={() => edit(trip)}>
-        <img src={getPublicFile(trip.thumbnail_path)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden' }} /><span><small>{categories.find(c => c.id === trip.category)?.title} {rows.some(row => row.id === trip.id) ? '· Saved' : '· Site default'}</small><strong>{trip.name_en}</strong></span><i className={trip.published ? 'is-published' : ''}>{trip.published ? 'Live' : 'Hidden'}</i>
-      </button>)}</div>
+      <div className="admin-trip-list">{combinedRows.map(trip => <div className="admin-trip-row" key={trip.id}>
+        <button className={`admin-trip ${form.id === trip.id ? 'is-selected' : ''}`} onClick={() => edit(trip)}>
+          <img src={getPublicFile(trip.thumbnail_path)} alt="" onError={event => { event.currentTarget.style.visibility = 'hidden' }} /><span><small>{categories.find(c => c.id === trip.category)?.title} {rows.some(row => row.id === trip.id) ? '· Saved' : '· Site default'}</small><strong>{trip.name_en}</strong></span><i className={trip.published ? 'is-published' : ''}>{trip.published ? 'Live' : 'Hidden'}</i>
+        </button><button type="button" className="admin-row-delete" aria-label={`Delete or hide ${trip.name_en}`} title="Delete or hide" disabled={busy} onClick={() => handleDelete(trip)}>×</button>
+      </div>)}</div>
     </section>
     <form className="admin-editor" onSubmit={handleSave}><div className="admin-editor__heading"><div><span className="admin-kicker">Trip details</span><h2>{form.id ? 'Edit destination' : 'Add a destination'}</h2></div>{form.id && <button type="button" className="admin-delete" disabled={busy} onClick={() => handleDelete(form)}>Delete / hide</button>}</div>
       <div className="admin-fields admin-fields--two"><label>Category<select value={form.category} onChange={e => update('category', e.target.value as TripCategory)}>{categories.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}</select></label><label>Sort order<input type="number" value={form.sort_order} onChange={e => update('sort_order', Number(e.target.value))} /><small>0 appears first; 10 appears after it. New items default to 999 (near the bottom).</small></label></div>
@@ -191,9 +193,11 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
       <button className="admin-primary admin-save" disabled={busy}>{busy ? 'Saving…' : 'Save destination'}</button>
     </form></div> : <div className="admin-layout"><section className="admin-list"><div className="admin-list__top"><div><span className="admin-kicker">Customer video gallery · lower sort numbers appear first</span><h2>{combinedMemories.length} videos</h2></div><button className="admin-primary" onClick={startNewMemory}>＋ Add video</button></div>
       <input className="admin-search" type="search" placeholder="Search memories" value={query} onChange={e => setQuery(e.target.value)} />
-      <div className="admin-trip-list">{combinedMemories.map(memory => <button className={`admin-trip ${memoryForm.id === memory.id ? 'is-selected' : ''}`} key={memory.id} onClick={() => editMemory(memory)}>
-        <video src={getPublicFile(memory.video_path)} muted preload="none" /><span><small>{memories.some(item => item.id === memory.id) ? 'Saved' : 'Site default'}</small><strong>{memory.title_en}</strong></span><i className={memory.published ? 'is-published' : ''}>{memory.published ? 'Live' : 'Hidden'}</i>
-      </button>)}</div>
+      <div className="admin-trip-list">{combinedMemories.map(memory => <div className="admin-trip-row" key={memory.id}>
+        <button className={`admin-trip ${memoryForm.id === memory.id ? 'is-selected' : ''}`} onClick={() => editMemory(memory)}>
+          <video src={getPublicFile(memory.video_path)} muted preload="none" /><span><small>{memories.some(item => item.id === memory.id) ? 'Saved' : 'Site default'}</small><strong>{memory.title_en}</strong></span><i className={memory.published ? 'is-published' : ''}>{memory.published ? 'Live' : 'Hidden'}</i>
+        </button><button type="button" className="admin-row-delete" aria-label={`Delete or hide ${memory.title_en}`} title="Delete or hide" disabled={busy} onClick={() => handleDeleteMemory(memory)}>×</button>
+      </div>)}</div>
     </section>
     <form className="admin-editor" onSubmit={handleSaveMemory}><div className="admin-editor__heading"><div><span className="admin-kicker">Travel memory</span><h2>{memoryForm.id ? 'Edit video' : 'Add a video'}</h2></div>{memoryForm.id && <button type="button" className="admin-delete" disabled={busy} onClick={() => handleDeleteMemory(memoryForm)}>Delete / hide</button>}</div>
       <div className="admin-fields admin-fields--two"><label>Title in English<input required value={memoryForm.title_en} onChange={e => setMemoryForm(current => ({ ...current, title_en: e.target.value }))} /></label><label>Title in Marathi<input value={memoryForm.title_mr} onChange={e => setMemoryForm(current => ({ ...current, title_mr: e.target.value }))} /></label></div>
