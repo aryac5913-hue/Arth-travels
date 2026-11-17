@@ -249,7 +249,7 @@ function Arrow() { return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M
 function Brand({ compact = false, footer = false }: { compact?: boolean; footer?: boolean }) {
   return <Link page="home" className={`brand ${compact ? 'brand--compact' : ''}`}>
     <span className="brand__mark"><img src={assetUrl('assets/client-logo.png')} alt="" /></span>
-    <img className="brand__wordmark" src={assetUrl(footer ? 'assets/arth-group-wordmark-transparent.png' : 'assets/arth-group-wordmark-clean.png')} alt="Arth Group" />
+    <img className="brand__wordmark" src={assetUrl('assets/arth-group-wordmark-client.png')} alt="Arth Group" />
   </Link>
 }
 
@@ -521,6 +521,6 @@ export default function App() {
       {page === 'home' && <Home language={language} />}{page === 'destinations' && <Destinations language={language} managedTrips={managedTrips} />}{page === 'about' && <About language={language} />}{page === 'contact' && <Contact language={language} />}{page === 'memories' && <Memories language={language} memories={memoriesForDisplay} />}
       <Footer language={language} />
     </div>
-    {showLoader && <div className="site-loader" role="status" aria-label="Loading Arth Group"><div className="site-loader__mark"><img src={assetUrl('assets/client-logo.png')} alt="Arth Group emblem" /></div><img className="site-loader__wordmark" src={assetUrl('assets/arth-group-wordmark-clean.png')} alt="Arth Group" /><span className="site-loader__line" /></div>}
+    {showLoader && <div className="site-loader" role="status" aria-label="Loading Arth Group"><div className="site-loader__mark"><img src={assetUrl('assets/client-logo.png')} alt="Arth Group emblem" /></div><img className="site-loader__wordmark" src={assetUrl('assets/arth-group-wordmark-client.png')} alt="Arth Group" /><span className="site-loader__line" /></div>}
   </>
 }
