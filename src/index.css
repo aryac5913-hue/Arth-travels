@@ -190,3 +190,11 @@
 @media(max-width:640px){.header-inner{height:74px}.brand{gap:10px}.brand__mark{width:52px;height:52px}.brand__type strong{font-size:22px}}
 @media(max-width:380px){.header-inner{padding:0 16px}.brand{gap:9px}.brand__mark{width:46px;height:46px}.brand__type strong{font-size:20px}}
 
+/* The client's clean Arth Group artwork replaces the recreated wordmark. */
+.brand__wordmark{display:block;width:250px;height:auto;max-height:64px;object-fit:contain;mix-blend-mode:multiply}
+.brand--compact .brand__wordmark{width:218px;max-height:56px}
+.site-loader__wordmark{display:block;width:min(72vw,460px);height:auto;max-height:120px;object-fit:contain;mix-blend-mode:multiply}
+.footer .brand__wordmark{padding:4px 8px;border-radius:5px;background:#fff;mix-blend-mode:normal}
+@media(max-width:640px){.brand__wordmark{width:190px;max-height:52px}.brand--compact .brand__wordmark{width:176px;max-height:48px}.site-loader__wordmark{width:min(82vw,360px);max-height:100px}}
+@media(max-width:380px){.brand__wordmark{width:170px}}
+
