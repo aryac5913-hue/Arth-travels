@@ -47,13 +47,14 @@ const content = {
     international: 'International Travel', internationalText: 'Explore 11 international tour plans, from Thailand and Bhutan to Southeast Asia and Sri Lanka. Choose a destination photo, then open its itinerary; English and Marathi versions are shown where supplied.',
     corporate: 'MICE Travel', corporateText: 'MICE itineraries are coming soon. We are preparing tailored corporate travel experiences for your team—please check back shortly.', comingSoon: 'Coming soon',
     pilgrimage: 'Pilgrimage Tour', pilgrimageText: 'Explore Char Dham, Kashi–Prayagraj–Ayodhya, Gaya, and Chitrakoot routes from the supplied itineraries.',
-    itinerary: 'Itinerary', viewItinerary: 'View itinerary', closeItinerary: 'Close itinerary', itineraryLanguage: 'Itinerary language', destinationPhoto: 'Destination photo', suppliedLanguageOnly: 'This itinerary is not available in the selected language; showing the available poster.',
+    itinerary: 'Itinerary', viewItinerary: 'View itinerary', closeItinerary: 'Close itinerary', itineraryLanguage: 'Itinerary language', destinationPhoto: 'Destination photo', suppliedLanguageOnly: 'This itinerary is not available in the selected language; showing the available poster.', zoomIn: 'Zoom in', zoomOut: 'Zoom out', zoomReset: 'Fit poster',
     aboutKicker: 'Our story, since 5 January 2026', aboutTitle: 'Travel that takes you closer to the stories of a place.',
     aboutIntro: 'Arth Travels began on 5 January 2026. Since then, we have welcomed more than 2,000 people on family, couple, solo, group and corporate journeys.',
-    founderKicker: 'Meet our founder', founderName: 'Anand Dave', founderRole: 'Founder, Arth Travels · Community leader',
-    founderBio: 'A Pune-based public speaker and community figure, Anand is the founding president of Hindu Mahasangh. Since Arth Travels began on 5 January 2026, he has helped welcome more than 2,000 travellers. His interest in people, culture and history shapes journeys that go beyond the usual sightseeing.',
+    founderKicker: 'Meet our founder', founderName: 'Anand Dave', founderRole: 'Founder, Arth Travels',
+    founderBio: 'Since Arth Travels began on 5 January 2026, more than 2,000 travellers have joined our family, couple, solo, group and corporate journeys. Anand believes every trip can offer more than sightseeing—it can bring the stories of a place to life.',
     storyKicker: 'Go beyond the postcard', storyTitle: 'Every place has a story worth hearing.',
-    storyText: 'Our journeys are designed to make room for the history behind a destination. At Cellular Jail in the Andaman Islands, Anand shares a talk about Veer Savarkar—so a visit can become a moment of learning and reflection, not just a photo stop.',
+    storyText: 'We explore the landmarks and make time for the history, people and events that give each place its meaning.',
+    historyPoints: ['Andaman: At Cellular Jail, learn about Veer Savarkar and the history of India’s freedom struggle through Anand’s talk.', 'Agra: Look beyond the Taj Mahal to discover the stories of Agra Fort and the Mughal era.', 'Every destination: Local heritage and context turn sightseeing into a richer travel experience.'],
     journeyKicker: 'Our journey so far', journeyTitle: '2,000+ people. Countless stories. One journey with Arth.',
     travellersValue: '2,000+', travellersLabel: 'Travellers', travellersCopy: 'Family, couple, solo and group journeys',
     monthsValue: '10', monthsLabel: 'Months', monthsCopy: 'Of creating memorable experiences',
@@ -95,13 +96,14 @@ const content = {
     international: 'आंतरराष्ट्रीय प्रवास', internationalText: 'थायलंड आणि भूतानपासून आग्नेय आशिया व श्रीलंकेपर्यंतच्या ११ सहली पाहा. ठिकाणाचे छायाचित्र निवडून प्रवास कार्यक्रम उघडा; उपलब्ध इंग्रजी किंवा मराठी आवृत्ती दाखवली जाईल.',
     corporate: 'MICE प्रवास', corporateText: 'MICE सहलींचे नियोजन लवकरच उपलब्ध होईल. खास कॉर्पोरेट प्रवास अनुभव तयार करत आहोत—कृपया लवकरच पुन्हा भेट द्या.', comingSoon: 'लवकरच येत आहे',
     pilgrimage: 'तीर्थयात्रा', pilgrimageText: 'उपलब्ध नियोजनात चारधाम, काशी–प्रयागराज–अयोध्या, गया आणि चित्रकूट यात्रांचा समावेश आहे.',
-    itinerary: 'प्रवास कार्यक्रम', viewItinerary: 'प्रवास कार्यक्रम पाहा', closeItinerary: 'प्रवास कार्यक्रम बंद करा', itineraryLanguage: 'प्रवास कार्यक्रमाची भाषा', destinationPhoto: 'पर्यटनस्थळाचे छायाचित्र', suppliedLanguageOnly: 'निवडलेल्या भाषेतील कार्यक्रम उपलब्ध नाही; उपलब्ध पोस्टर दाखवले आहे.',
+    itinerary: 'प्रवास कार्यक्रम', viewItinerary: 'प्रवास कार्यक्रम पाहा', closeItinerary: 'प्रवास कार्यक्रम बंद करा', itineraryLanguage: 'प्रवास कार्यक्रमाची भाषा', destinationPhoto: 'पर्यटनस्थळाचे छायाचित्र', suppliedLanguageOnly: 'निवडलेल्या भाषेतील कार्यक्रम उपलब्ध नाही; उपलब्ध पोस्टर दाखवले आहे.', zoomIn: 'मोठे करून पाहा', zoomOut: 'लहान करून पाहा', zoomReset: 'पूर्ण पोस्टर पाहा',
     aboutKicker: '५ जानेवारी २०२६ पासूनचा आमचा प्रवास', aboutTitle: 'प्रवास, जो ठिकाणांच्या कथा जवळ आणतो.',
     aboutIntro: 'Arth Travels ची सुरुवात ५ जानेवारी २०२६ रोजी झाली. तेव्हापासून कौटुंबिक, जोडप्यांच्या, एकट्याने, समूह आणि कॉर्पोरेट सहलींमधून २,००० हून अधिक प्रवाशांनी आमच्यासोबत प्रवास केला आहे.',
-    founderKicker: 'आमचे संस्थापक', founderName: 'Anand Dave', founderRole: 'संस्थापक, Arth Travels · समाजाभिमुख व्यक्तिमत्त्व',
-    founderBio: 'पुण्यातील सार्वजनिक वक्ते आणि समाजाभिमुख व्यक्तिमत्त्व असलेले Anand हे Hindu Mahasangh चे संस्थापक अध्यक्ष आहेत. ५ जानेवारी २०२६ रोजी Arth Travels सुरू झाल्यापासून त्यांनी २,००० हून अधिक प्रवाशांचे स्वागत केले आहे. लोक, संस्कृती आणि इतिहासाविषयीची त्यांची आस्था सहलींना नेहमीच्या पर्यटनापलीकडे घेऊन जाते.',
+    founderKicker: 'आमचे संस्थापक', founderName: 'Anand Dave', founderRole: 'संस्थापक, Arth Travels',
+    founderBio: '५ जानेवारी २०२६ रोजी Arth Travels सुरू झाल्यापासून २,००० हून अधिक प्रवाशांनी कौटुंबिक, जोडप्यांच्या, एकल, समूह आणि कॉर्पोरेट सहली केल्या आहेत. प्रत्येक सहल केवळ पर्यटनापुरती न राहता त्या ठिकाणच्या कथा आणि इतिहास जवळून समजून घेण्याचा अनुभव असावा, असा Anand यांचा विश्वास आहे.',
     storyKicker: 'फक्त दृश्यांपलीकडे', storyTitle: 'प्रत्येक ठिकाणाची एक कथा असते.',
-    storyText: 'प्रत्येक स्थळामागचा इतिहास जाणून घेण्यासाठी आमच्या सहलींमध्ये वेळ राखला जातो. अंदमानमधील सेल्युलर जेल येथे Anand वीर सावरकरांवर मनोगत मांडतात—म्हणून ती भेट केवळ फोटोचा थांबा न राहता शिकण्याचा आणि चिंतनाचा अनुभव बनते.',
+    storyText: 'आम्ही स्थळे पाहतोच; पण त्या प्रत्येक ठिकाणाला अर्थ देणारा इतिहास, माणसे आणि घटना जाणून घेण्यासाठीही वेळ देतो.',
+    historyPoints: ['अंदमान: सेल्युलर जेलमध्ये Anand यांच्या मनोगतातून वीर सावरकर आणि भारतीय स्वातंत्र्यलढ्याचा इतिहास जाणून घ्या.', 'आग्रा: ताजमहालासोबत आग्रा किल्ला आणि मुघलकालीन काळाच्या कथा समजून घ्या.', 'प्रत्येक ठिकाणी: स्थानिक वारसा आणि संदर्भामुळे पर्यटनाचा अनुभव अधिक अर्थपूर्ण होतो.'],
     journeyKicker: 'आतापर्यंतचा प्रवास', journeyTitle: '२,०००+ प्रवासी. असंख्य कथा. Arth सोबतचा एक प्रवास.',
     travellersValue: '२,०००+', travellersLabel: 'प्रवासी', travellersCopy: 'कुटुंब, जोडपी, एकल आणि समूह सहली',
     monthsValue: '१०', monthsLabel: 'महिने', monthsCopy: 'अविस्मरणीय अनुभव घडवताना',
@@ -338,6 +340,7 @@ function DestinationSection({ title, text, names, images, editable }: { title: s
 
 function ItineraryGallery({ language, t, trips, title, text }: { language: Language; t: typeof content.en | typeof content.mr; trips: ItineraryTrip[]; title: string; text: string }) {
   const [activeTrip, setActiveTrip] = useState<ItineraryTrip | null>(null)
+  const [zoom, setZoom] = useState(1)
   useEffect(() => {
     if (!activeTrip) return
     const closeOnEscape = (event: KeyboardEvent) => { if (event.key === 'Escape') setActiveTrip(null) }
@@ -354,7 +357,7 @@ function ItineraryGallery({ language, t, trips, title, text }: { language: Langu
         return <article className="domestic-itinerary-card" key={trip.id}>
           <div className="domestic-itinerary-card__photo"><img src={trip.thumbnail} alt={`${trip[language]} — ${t.destinationPhoto}`} loading="lazy" /><span>{t.destinationPhoto}</span></div>
           <div className="domestic-itinerary-card__copy"><h3>{trip[language]}</h3>{!exactLanguage(trip) && <p>{t.suppliedLanguageOnly}</p>}
-            <button className="text-link" onClick={() => setActiveTrip(trip)} aria-haspopup="dialog">{t.viewItinerary}<Arrow /></button>
+            <button className="text-link" onClick={() => { setZoom(1); setActiveTrip(trip) }} aria-haspopup="dialog">{t.viewItinerary}<Arrow /></button>
           </div>
         </article>
       })}</div>
@@ -363,7 +366,15 @@ function ItineraryGallery({ language, t, trips, title, text }: { language: Langu
       <section className="itinerary-modal__dialog" role="dialog" aria-modal="true" aria-label={`${activeTrip[language]} — ${t.itinerary}`}>
         <header className="itinerary-modal__header"><div><span className="kicker">{t.itinerary}</span><h2>{activeTrip[language]}</h2></div><button className="itinerary-modal__close" onClick={() => setActiveTrip(null)} aria-label={t.closeItinerary}>×</button></header>
         {!exactLanguage(activeTrip) && <p className="itinerary-modal__note">{t.suppliedLanguageOnly}</p>}
-        <div className="itinerary-modal__image"><img src={itineraryFor(activeTrip, language)} alt={`${activeTrip[language]} — ${t.itinerary}`} /></div>
+        <div className="itinerary-modal__image">
+          <div className="itinerary-modal__zoom" aria-label={t.itinerary}>
+            <button type="button" onClick={() => setZoom(value => Math.max(.75, value - .25))} aria-label={t.zoomOut} disabled={zoom <= .75}>−</button>
+            <output aria-live="polite">{Math.round(zoom * 100)}%</output>
+            <button type="button" onClick={() => setZoom(value => Math.min(2.5, value + .25))} aria-label={t.zoomIn} disabled={zoom >= 2.5}>+</button>
+            <button type="button" className="itinerary-modal__zoom-reset" onClick={() => setZoom(1)}>{t.zoomReset}</button>
+          </div>
+          <img style={{ width: `${zoom * 100}%`, maxWidth: 'none' }} src={itineraryFor(activeTrip, language)} alt={`${activeTrip[language]} — ${t.itinerary}`} />
+        </div>
       </section>
     </div>}
   </>
@@ -410,14 +421,14 @@ function About({ language }: { language: Language }) {
   return <main>
     <section className="founder-feature section">
       <div className="founder-gallery" aria-label={language === 'en' ? 'Photos of Anand Dave' : 'Anand Dave यांची छायाचित्रे'}>
-        <figure className="founder-gallery__main"><img src={assetUrl('assets/founder photos/1.jpg')} alt={language === 'en' ? 'Anand Dave seated at a public event' : 'सार्वजनिक कार्यक्रमात बसलेले Anand Dave'} /><figcaption><strong>Anand Dave</strong><span>{language === 'en' ? 'Founder, Arth Travels' : 'संस्थापक, Arth Travels'}</span></figcaption></figure>
+        <figure className="founder-gallery__main"><img src={assetUrl('assets/founder photos/anand-dave.jpg')} alt={language === 'en' ? 'Portrait of Arth Travels founder Anand Dave' : 'Arth Travels चे संस्थापक Anand Dave यांचे छायाचित्र'} /><figcaption><strong>Anand Dave</strong><span>{language === 'en' ? 'Founder, Arth Travels' : 'संस्थापक, Arth Travels'}</span></figcaption></figure>
         <div className="founder-gallery__secondary">
           <figure><img src={assetUrl('assets/founder photos/3.jpg')} alt={language === 'en' ? 'Anand Dave addressing an audience' : 'श्रोत्यांना संबोधित करताना Anand Dave'} /><figcaption>{language === 'en' ? 'Sharing ideas with an audience' : 'श्रोत्यांशी विचारांची देवाणघेवाण'}</figcaption></figure>
           <figure><img src={assetUrl('assets/founder photos/5.jpg')} alt={language === 'en' ? 'Anand Dave at a public recognition event' : 'सार्वजनिक सत्कार समारंभात Anand Dave'} /><figcaption>{language === 'en' ? 'A moment from a community event' : 'समुदायिक कार्यक्रमातील एक क्षण'}</figcaption></figure>
         </div>
       </div>
       <div className="founder-feature__copy"><span className="kicker">{t.founderKicker}</span><h2>{t.founderName}</h2><span className="founder-feature__role">{t.founderRole}</span><p>{t.founderBio}</p>
-        <aside className="founder-feature__story"><span>{t.storyKicker}</span><h3>{t.storyTitle}</h3><p>{t.storyText}</p></aside>
+        <aside className="founder-feature__story"><span>{t.storyKicker}</span><h3>{t.storyTitle}</h3><p>{t.storyText}</p><ul>{t.historyPoints.map(point => <li key={point}>{point}</li>)}</ul></aside>
       </div>
     </section>
     <section className="journey-stats-wrap"><div className="journey-stats"><span className="journey-stats__kicker">{t.journeyKicker}</span><div className="journey-stats__grid">{stats.map(stat => <article className="journey-stat" key={stat.label}><strong>{stat.value}</strong><h3>{stat.label}</h3><p>{stat.copy}</p></article>)}</div><div className="journey-stats__footer">{t.journeyTitle}</div></div></section>

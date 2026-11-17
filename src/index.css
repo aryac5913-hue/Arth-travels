@@ -201,3 +201,16 @@
 @media(max-width:640px){.brand__mark{width:58px;height:58px}.brand__wordmark{width:172px;max-height:45px}.brand--compact .brand__mark{width:52px;height:52px}.brand--compact .brand__wordmark{width:158px;max-height:42px}.site-loader__mark{width:164px;height:164px}.site-loader__wordmark{width:min(82vw,330px);max-height:90px}}
 @media(max-width:380px){.brand__mark{width:54px;height:54px}.brand__wordmark{width:155px}.brand--compact .brand__mark{width:48px;height:48px}.brand--compact .brand__wordmark{width:146px}}
 
+/* Make itinerary posters readable on small screens with in-modal zoom controls. */
+.itinerary-modal__image{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:auto;overscroll-behavior:contain;}
+.itinerary-modal__image img{display:block;flex:none;width:100%;height:auto;max-width:none;max-height:none;}
+.itinerary-modal__zoom{position:sticky;top:0;z-index:2;align-self:stretch;display:flex;align-items:center;justify-content:flex-end;gap:7px;padding:0 0 10px;background:rgba(232,238,232,.96);}
+.itinerary-modal__zoom button{min-width:36px;height:34px;padding:0 10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink);font:600 16px var(--sans);}
+.itinerary-modal__zoom button:disabled{opacity:.45;cursor:default}
+.itinerary-modal__zoom output{min-width:46px;color:var(--muted);text-align:center;font-size:11px;font-variant-numeric:tabular-nums}
+.itinerary-modal__zoom .itinerary-modal__zoom-reset{font-size:11px}
+.founder-gallery__main img{object-position:center 18%}
+.founder-feature__story ul{margin:18px 0 0;padding:0;display:grid;gap:12px;list-style:none}
+.founder-feature__story li{padding-left:14px;border-left:2px solid var(--sage);color:var(--muted);font-size:13px;line-height:1.7}
+@media(max-width:640px){.itinerary-modal__zoom{gap:5px;padding-bottom:8px}.itinerary-modal__zoom button{min-width:34px;height:32px;padding:0 8px}.itinerary-modal__zoom .itinerary-modal__zoom-reset{font-size:10px}.founder-feature__story li{font-size:12px;line-height:1.65}}
+
