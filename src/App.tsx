@@ -54,7 +54,13 @@ const content = {
     founderBio: 'Since Arth Travels began on 5 January 2026, more than 2,000 travellers have joined our family, couple, solo, group and corporate journeys. Anand believes every trip can offer more than sightseeing—it can bring the stories of a place to life.',
     storyKicker: 'Go beyond the postcard', storyTitle: 'Every place has a story worth hearing.',
     storyText: 'We explore the landmarks and make time for the history, people and events that give each place its meaning.',
-    historyPoints: ['Andaman: At Cellular Jail, learn about Veer Savarkar and the history of India’s freedom struggle through Anand’s talk.', 'Agra: Look beyond the Taj Mahal to discover the stories of Agra Fort and the Mughal era.', 'Every destination: Local heritage and context turn sightseeing into a richer travel experience.'],
+    historyPoints: [
+      { place: 'Andaman', detail: 'At Cellular Jail, learn about Veer Savarkar and the history of India’s freedom struggle through Anand’s talk.' },
+      { place: 'Agra', detail: 'Look beyond the Taj Mahal to discover the stories of Agra Fort and the Mughal era.' },
+      { place: 'Delhi', detail: 'Explore the Red Fort and Qutub Minar to trace the many eras that shaped India’s capital.' },
+      { place: 'Kashi', detail: 'Walk along Varanasi’s historic ghats and learn about the city’s living heritage.' },
+      { place: 'Every destination', detail: 'Local heritage and context turn sightseeing into a richer travel experience.' },
+    ],
     journeyKicker: 'Our journey so far', journeyTitle: '2,000+ people. Countless stories. One journey with Arth.',
     travellersValue: '2,000+', travellersLabel: 'Travellers', travellersCopy: 'Family, couple, solo and group journeys',
     monthsValue: '10', monthsLabel: 'Months', monthsCopy: 'Of creating memorable experiences',
@@ -103,7 +109,13 @@ const content = {
     founderBio: '५ जानेवारी २०२६ रोजी Arth Travels सुरू झाल्यापासून २,००० हून अधिक प्रवाशांनी कौटुंबिक, जोडप्यांच्या, एकल, समूह आणि कॉर्पोरेट सहली केल्या आहेत. प्रत्येक सहल केवळ पर्यटनापुरती न राहता त्या ठिकाणच्या कथा आणि इतिहास जवळून समजून घेण्याचा अनुभव असावा, असा Anand यांचा विश्वास आहे.',
     storyKicker: 'फक्त दृश्यांपलीकडे', storyTitle: 'प्रत्येक ठिकाणाची एक कथा असते.',
     storyText: 'आम्ही स्थळे पाहतोच; पण त्या प्रत्येक ठिकाणाला अर्थ देणारा इतिहास, माणसे आणि घटना जाणून घेण्यासाठीही वेळ देतो.',
-    historyPoints: ['अंदमान: सेल्युलर जेलमध्ये Anand यांच्या मनोगतातून वीर सावरकर आणि भारतीय स्वातंत्र्यलढ्याचा इतिहास जाणून घ्या.', 'आग्रा: ताजमहालासोबत आग्रा किल्ला आणि मुघलकालीन काळाच्या कथा समजून घ्या.', 'प्रत्येक ठिकाणी: स्थानिक वारसा आणि संदर्भामुळे पर्यटनाचा अनुभव अधिक अर्थपूर्ण होतो.'],
+    historyPoints: [
+      { place: 'अंदमान', detail: 'सेल्युलर जेलमध्ये Anand यांच्या मनोगतातून वीर सावरकर आणि भारतीय स्वातंत्र्यलढ्याचा इतिहास जाणून घ्या.' },
+      { place: 'आग्रा', detail: 'ताजमहालासोबत आग्रा किल्ला आणि मुघलकालीन काळाच्या कथा समजून घ्या.' },
+      { place: 'दिल्ली', detail: 'लाल किल्ला आणि कुतुबमिनार पाहताना भारताच्या राजधानीला आकार देणारे विविध ऐतिहासिक कालखंड जाणून घ्या.' },
+      { place: 'काशी', detail: 'वाराणसीच्या ऐतिहासिक घाटांवर फिरताना शहराचा जिवंत वारसा आणि इतिहास जाणून घ्या.' },
+      { place: 'प्रत्येक ठिकाणी', detail: 'स्थानिक वारसा आणि संदर्भामुळे पर्यटनाचा अनुभव अधिक अर्थपूर्ण होतो.' },
+    ],
     journeyKicker: 'आतापर्यंतचा प्रवास', journeyTitle: '२,०००+ प्रवासी. असंख्य कथा. Arth सोबतचा एक प्रवास.',
     travellersValue: '२,०००+', travellersLabel: 'प्रवासी', travellersCopy: 'कुटुंब, जोडपी, एकल आणि समूह सहली',
     monthsValue: '१०', monthsLabel: 'महिने', monthsCopy: 'अविस्मरणीय अनुभव घडवताना',
@@ -428,7 +440,7 @@ function About({ language }: { language: Language }) {
         </div>
       </div>
       <div className="founder-feature__copy"><span className="kicker">{t.founderKicker}</span><h2>{t.founderName}</h2><span className="founder-feature__role">{t.founderRole}</span><p>{t.founderBio}</p>
-        <aside className="founder-feature__story"><span>{t.storyKicker}</span><h3>{t.storyTitle}</h3><p>{t.storyText}</p><ul>{t.historyPoints.map(point => <li key={point}>{point}</li>)}</ul></aside>
+        <aside className="founder-feature__story"><span>{t.storyKicker}</span><h3>{t.storyTitle}</h3><p>{t.storyText}</p><ul>{t.historyPoints.map(point => <li key={point.place}><strong>{point.place}</strong><span>{point.detail}</span></li>)}</ul></aside>
       </div>
     </section>
     <section className="journey-stats-wrap"><div className="journey-stats"><span className="journey-stats__kicker">{t.journeyKicker}</span><div className="journey-stats__grid">{stats.map(stat => <article className="journey-stat" key={stat.label}><strong>{stat.value}</strong><h3>{stat.label}</h3><p>{stat.copy}</p></article>)}</div><div className="journey-stats__footer">{t.journeyTitle}</div></div></section>

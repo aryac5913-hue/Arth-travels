@@ -211,6 +211,11 @@
 .itinerary-modal__zoom .itinerary-modal__zoom-reset{font-size:11px}
 .founder-gallery__main img{object-position:center 18%}
 .founder-feature__story ul{margin:18px 0 0;padding:0;display:grid;gap:12px;list-style:none}
-.founder-feature__story li{padding-left:14px;border-left:2px solid var(--sage);color:var(--muted);font-size:13px;line-height:1.7}
+.founder-feature__story{border:1px solid rgba(25,56,47,.12);border-left:4px solid var(--sage);box-shadow:0 10px 30px rgba(16,42,35,.05)}
+.founder-feature__story ul{grid-template-columns:repeat(2,minmax(0,1fr))}
+.founder-feature__story li{padding:14px;border:1px solid rgba(25,56,47,.1);border-left:3px solid var(--sage);border-radius:10px;background:linear-gradient(135deg,rgba(223,231,222,.72),rgba(255,253,248,.95));color:var(--muted);font-size:12px;line-height:1.65}
+.founder-feature__story li strong{display:block;margin-bottom:5px;color:var(--deep);font-size:12px;letter-spacing:.06em}
+.founder-feature__story li span{display:block}
 @media(max-width:640px){.itinerary-modal__zoom{gap:5px;padding-bottom:8px}.itinerary-modal__zoom button{min-width:34px;height:32px;padding:0 8px}.itinerary-modal__zoom .itinerary-modal__zoom-reset{font-size:10px}.founder-feature__story li{font-size:12px;line-height:1.65}}
+@media(max-width:640px){.founder-feature__story ul{grid-template-columns:1fr}.founder-feature__story li{padding:13px}}
 
