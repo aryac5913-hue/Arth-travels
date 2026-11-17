@@ -246,10 +246,10 @@ function Link({ page, className = '', children, onClick }: { page: Page; classNa
 }
 function Arrow() { return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10h11M11 6l4 4-4 4" /></svg> }
 
-function Brand({ compact = false }: { compact?: boolean }) {
+function Brand({ compact = false, footer = false }: { compact?: boolean; footer?: boolean }) {
   return <Link page="home" className={`brand ${compact ? 'brand--compact' : ''}`}>
     <span className="brand__mark"><img src={assetUrl('assets/client-logo.png')} alt="" /></span>
-    <img className="brand__wordmark" src={assetUrl('assets/arth-group-wordmark-clean.png')} alt="Arth Group" />
+    <img className="brand__wordmark" src={assetUrl(footer ? 'assets/arth-group-wordmark-transparent.png' : 'assets/arth-group-wordmark-clean.png')} alt="Arth Group" />
   </Link>
 }
 
@@ -275,7 +275,7 @@ function Footer({ language }: { language: Language }) {
   const t = content[language]
   return <footer className="footer">
     <div className="footer-main">
-      <div><Brand compact /><p>{t.footerText}</p></div>
+      <div><Brand compact footer /><p>{t.footerText}</p></div>
       <div className="footer-column"><strong>{t.quickLinks}</strong><Link page="destinations">{t.nav[1]}</Link><Link page="about">{t.nav[2]}</Link><Link page="memories">{t.memories}</Link></div>
       <div className="footer-column"><strong>{t.contactLabel}</strong>{COMPANY.phone ? <a href={`tel:${COMPANY.phone}`}>{COMPANY.phoneDisplay}</a> : <span>{t.notConfigured}</span>}<Link page="contact">{t.nav[3]}</Link></div>
     </div>

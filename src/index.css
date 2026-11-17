@@ -192,12 +192,12 @@
 
 /* The client's clean Arth Group artwork replaces the recreated wordmark. */
 .brand__mark{width:76px;height:76px}
-.brand__wordmark{display:block;width:218px;height:auto;max-height:56px;object-fit:contain;mix-blend-mode:multiply}
+.brand__wordmark{display:block;width:218px;height:auto;max-height:56px;object-fit:contain;mix-blend-mode:normal}
 .brand--compact .brand__mark{width:64px;height:64px}
 .brand--compact .brand__wordmark{width:190px;max-height:50px}
 .site-loader__mark{width:204px;height:204px}
-.site-loader__wordmark{display:block;width:min(72vw,420px);height:auto;max-height:110px;object-fit:contain;mix-blend-mode:multiply}
-.footer .brand__wordmark{padding:0;border-radius:0;background:transparent;mix-blend-mode:multiply}
+.site-loader__wordmark{display:block;width:min(72vw,420px);height:auto;max-height:110px;object-fit:contain;mix-blend-mode:normal}
+.footer .brand__wordmark{padding:0;border-radius:0;background:transparent;mix-blend-mode:normal}
 @media(max-width:640px){.brand__mark{width:58px;height:58px}.brand__wordmark{width:172px;max-height:45px}.brand--compact .brand__mark{width:52px;height:52px}.brand--compact .brand__wordmark{width:158px;max-height:42px}.site-loader__mark{width:164px;height:164px}.site-loader__wordmark{width:min(82vw,330px);max-height:90px}}
 @media(max-width:380px){.brand__mark{width:54px;height:54px}.brand__wordmark{width:155px}.brand--compact .brand__mark{width:48px;height:48px}.brand--compact .brand__wordmark{width:146px}}
 
