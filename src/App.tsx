@@ -249,7 +249,7 @@ function Arrow() { return <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M
 function Brand({ compact = false, footer = false }: { compact?: boolean; footer?: boolean }) {
   return <Link page="home" className={`brand ${compact ? 'brand--compact' : ''}`}>
     <span className="brand__mark"><img src={assetUrl('assets/client-logo.png')} alt="" /></span>
-    <img className="brand__wordmark" src={assetUrl('assets/arth-group-wordmark-client.png')} alt="Arth Group" />
+    {!footer && <img className="brand__wordmark" src={assetUrl('assets/arth-group-wordmark-client.png')} alt="Arth Group" />}
   </Link>
 }
 
