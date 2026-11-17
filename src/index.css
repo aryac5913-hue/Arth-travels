@@ -190,11 +190,3 @@
 @media(max-width:640px){.header-inner{height:74px}.brand{gap:10px}.brand__mark{width:52px;height:52px}.brand__type strong{font-size:22px}}
 @media(max-width:380px){.header-inner{padding:0 16px}.brand{gap:9px}.brand__mark{width:46px;height:46px}.brand__type strong{font-size:20px}}
 
-/* Use the supplied Arth Group wordmark artwork as the actual brand image. */
-.brand{display:inline-flex;align-items:center;flex:none}
-.brand__wordmark{display:block;width:260px;height:62px;overflow:hidden;border-radius:9px;object-fit:cover;object-position:center;box-shadow:0 4px 16px rgba(14,41,83,.12)}
-.brand--compact .brand__wordmark{width:230px;height:56px}
-.site-loader__wordmark{display:block;width:min(72vw,480px);height:auto;max-height:140px;border-radius:10px;object-fit:contain;box-shadow:0 12px 36px rgba(16,42,35,.14);animation:loader-breathe 1.6s ease-in-out infinite}
-.site-loader__mark,.site-loader__name{display:none}
-@media(max-width:640px){.brand__wordmark{width:205px;height:50px;border-radius:7px}.brand--compact .brand__wordmark{width:196px;height:48px}.site-loader__wordmark{width:min(82vw,390px);max-height:112px}}
-@media(max-width:380px){.brand__wordmark{width:190px;height:46px}.brand--compact .brand__wordmark{width:184px;height:44px}}
