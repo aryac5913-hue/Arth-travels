@@ -160,6 +160,9 @@ export async function deleteUploadedFile(path: string | null | undefined, token:
   await request(`/storage/v1/object/trip-media/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'DELETE' }, token)
 }
 
+
+
+
 export async function uploadFile(file: File, token: string, folder = 'trips') {
   if (file.size > 50 * 1024 * 1024) throw new Error('File is larger than the 50 MB upload limit.')
   const safeName = file.name.normalize('NFKD').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-+|-+$/g, '') || 'upload'
