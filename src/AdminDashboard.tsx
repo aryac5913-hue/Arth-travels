@@ -215,8 +215,8 @@
 
 
 
-import { useEffect, useMemo, useState, type FormEvent } from 'react'
-import { aboutFields, defaultAbout, type AboutContent, type AboutCopy, type Language } from './lib/about'
+import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from 'react'
+import { defaultAbout, type AboutContent, type AboutCopy, type Language } from './lib/about'
 import {
   deleteMemory, deleteTrip, deleteUploadedFile, fetchAboutContent, fetchAdminMemories, fetchTrips, getPublicFile, readSession, saveAboutContent, saveMemory, saveTrip, signIn, signOut, supabaseReady, uploadFile,
   type AuthSession, type ManagedMemory, type ManagedTrip, type TripCategory,
@@ -229,11 +229,30 @@ const categories: { id: TripCategory; title: string }[] = [
   { id: 'domestic', title: 'Domestic' }, { id: 'international', title: 'International' }, { id: 'mice', title: 'MICE' }, { id: 'pilgrimage', title: 'Pilgrimage' },
 ]
 
-const photoSlots: { key: PhotoSlot; label: string }[] = [
-  { key: 'main', label: 'Main photo (Founder portrait)' },
-  { key: 'second', label: 'Second photo' },
-  { key: 'third', label: 'Third photo' },
+const photoSlots: { key: PhotoSlot; title: string; hint: string }[] = [
+  { key: 'main', title: '1. Main Founder Photo', hint: 'Shown next to the founder bio.' },
+  { key: 'second', title: '2. Session / Group Photo', hint: 'Shown in the story gallery.' },
+  { key: 'third', title: '3. Event / Recognition Photo', hint: 'Shown as the third About image.' },
 ]
+
+const cardBoxStyle: CSSProperties = {
+  border: '1px solid rgba(25, 45, 35, 0.14)',
+  borderRadius: '14px',
+  padding: '18px',
+  marginBottom: '18px',
+  background: '#fff',
+}
+
+const inputBoxStyle: CSSProperties = {
+  width: '100%',
+  marginTop: '6px',
+  padding: '10px 12px',
+  borderRadius: '10px',
+  border: '1px solid rgba(25, 45, 35, 0.22)',
+  background: '#fcfbf8',
+  font: 'inherit',
+  color: 'inherit',
+}
 
 function mergeAbout(source?: AboutContent | null): AboutContent {
   return {
@@ -361,6 +380,7 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
   }
 
   const removeHistoryPoint = (index: number) => {
+    if (!window.confirm('Delete this history highlight?')) return
     setAbout(current => ({
       ...current,
       [aboutLang]: {
@@ -370,9 +390,40 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
     }))
   }
 
+  const resetPhotoSlot = (slot: PhotoSlot) => {
+    setAboutFiles(prev => {
+      const next = { ...prev }
+      delete next[slot]
+      return next
+    })
+    setAbout(current => ({
+      ...current,
+      photos: { ...current.photos, [slot]: defaultAbout.photos[slot] },
+    }))
+    setNotice('Photo reset to original default. Click "Save About section" to apply.')
+  }
+
+  const handleResetAllAbout = async () => {
+    if (!session || !window.confirm('Reset ALL About text (English & Marathi) and photos back to the original website defaults?')) return
+    setBusy(true); setError(''); setNotice('')
+    try {
+      const oldPhotos = Object.values(about.photos)
+      const fresh = mergeAbout(defaultAbout)
+      await saveAboutContent(fresh, session.access_token)
+      for (const path of oldPhotos) {
+        await deleteUploadedFile(path, session.access_token).catch(() => {})
+      }
+      setAbout(fresh)
+      setAboutFiles({})
+      setNotice('About section reset to original website content.')
+    } catch (e) { setError(e instanceof Error ? e.message : 'Unable to reset About section.') }
+    finally { setBusy(false) }
+  }
+
   const handleSaveAbout = async (event: FormEvent) => {
     event.preventDefault()
-    if (!session) return
+    const currentSession = readSession() || session
+    if (!currentSession) return
     setBusy(true); setError(''); setNotice('')
     try {
       const nextPhotos = { ...about.photos }
@@ -380,7 +431,7 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
       for (const slot of photoSlots) {
         const file = aboutFiles[slot.key]
         if (file) {
-          const uploaded = await uploadFile(file, session.access_token, 'about')
+          const uploaded = await uploadFile(file, currentSession.access_token, 'about')
           if (about.photos[slot.key] && about.photos[slot.key] !== uploaded) {
             replacedPaths.push(about.photos[slot.key])
           }
@@ -388,13 +439,15 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
         }
       }
       const payload: AboutContent = { ...about, id: 'main', photos: nextPhotos }
-      await saveAboutContent(payload, session.access_token)
+      await saveAboutContent(payload, currentSession.access_token)
+      const latestSession = readSession()
+      if (latestSession) setSession(latestSession)
       for (const oldPath of replacedPaths) {
-        await deleteUploadedFile(oldPath, session.access_token).catch(() => {})
+        await deleteUploadedFile(oldPath, (latestSession || currentSession).access_token).catch(() => {})
       }
       setAbout(mergeAbout(payload))
       setAboutFiles({})
-      setNotice('About section saved. Changes are now available on the public website.')
+      setNotice('About section saved! Refresh the public website to view your changes.')
     } catch (e) { setError(e instanceof Error ? e.message : 'Unable to save About section.') }
     finally { setBusy(false) }
   }
@@ -492,6 +545,7 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
   </form></main>
 
   const headingTitle = section === 'trips' ? 'travel' : section === 'memories' ? 'Travel memories' : 'About section'
+  const activeCopy = about[aboutLang]
 
   return <main className="admin-page admin-workspace"><header className="admin-topbar"><a className="admin-back" href="#/">← Public website</a><div><span className="admin-kicker">Arth Travels · Admin</span><h1>Manage {headingTitle}</h1></div><button className="admin-secondary" onClick={() => { signOut(); setSession(null) }}>Sign out</button></header>
     <nav className="admin-section-tabs" aria-label="Admin sections">
@@ -530,58 +584,134 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
       <label className="admin-toggle"><input type="checkbox" checked={memoryForm.published} onChange={e => setMemoryForm(current => ({ ...current, published: e.target.checked }))} /><span><strong>Show on Travel Memories page</strong><small>Hidden videos stay in this dashboard.</small></span></label>
       {error && <div className="admin-message is-error" role="alert">{error}</div>}{notice && <div className="admin-message" role="status">{notice}</div>}
       <button className="admin-primary admin-save" disabled={busy}>{busy ? 'Saving…' : 'Save video'}</button>
-    </form></div> : <form className="admin-editor" onSubmit={handleSaveAbout}>
+    </form></div> : <form className="admin-editor" onSubmit={handleSaveAbout} style={{ maxWidth: '980px', margin: '0 auto' }}>
       <div className="admin-editor__heading">
-        <div><span className="admin-kicker">Founder & history story</span><h2>About section</h2></div>
-        <div className="admin-section-tabs" aria-label="About language">
-          <button type="button" className={aboutLang === 'en' ? 'is-active' : ''} onClick={() => setAboutLang('en')}>English</button>
-          <button type="button" className={aboutLang === 'mr' ? 'is-active' : ''} onClick={() => setAboutLang('mr')}>Marathi</button>
+        <div>
+          <span className="admin-kicker">Edit live website content</span>
+          <h2>About Page ({aboutLang === 'en' ? 'English' : 'Marathi'})</h2>
+          <small>Edit text in both English and Marathi tabs below, then click Save at the bottom.</small>
+        </div>
+        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div className="admin-section-tabs" aria-label="About language" style={{ margin: 0 }}>
+            <button type="button" className={aboutLang === 'en' ? 'is-active' : ''} onClick={() => setAboutLang('en')}>English</button>
+            <button type="button" className={aboutLang === 'mr' ? 'is-active' : ''} onClick={() => setAboutLang('mr')}>मराठी (Marathi)</button>
+          </div>
+          <button type="button" className="admin-delete" disabled={busy} onClick={handleResetAllAbout}>Reset all to default</button>
         </div>
       </div>
 
-      <div className="admin-fields admin-fields--two">
-        {aboutFields.map(field => (
-          <label key={field.key}>
-            {field.label} ({aboutLang.toUpperCase()})
-            <textarea
-              rows={field.key === 'founderBio' || field.key === 'storyText' ? 3 : 1}
-              value={about[aboutLang][field.key]}
-              onChange={e => updateAboutCopy(field.key, e.target.value)}
-            />
+      {/* 1. Founder Profile */}
+      <section style={cardBoxStyle}>
+        <span className="admin-kicker">Step 1 · Founder profile</span>
+        <h3 style={{ margin: '4px 0 14px' }}>Founder details</h3>
+        <div className="admin-fields admin-fields--two">
+          <label>Small label above name
+            <input style={inputBoxStyle} value={activeCopy.founderKicker} onChange={e => updateAboutCopy('founderKicker', e.target.value)} />
           </label>
-        ))}
-      </div>
+          <label>Founder name
+            <input style={inputBoxStyle} value={activeCopy.founderName} onChange={e => updateAboutCopy('founderName', e.target.value)} />
+          </label>
+        </div>
+        <label style={{ display: 'block', marginTop: '12px' }}>Founder role / title
+          <input style={inputBoxStyle} value={activeCopy.founderRole} onChange={e => updateAboutCopy('founderRole', e.target.value)} />
+        </label>
+        <label style={{ display: 'block', marginTop: '12px' }}>Founder introduction paragraph
+          <textarea style={inputBoxStyle} rows={4} value={activeCopy.founderBio} onChange={e => updateAboutCopy('founderBio', e.target.value)} />
+        </label>
+      </section>
 
-      <div>
-        <span className="admin-kicker">History highlights ({aboutLang.toUpperCase()})</span>
-        {about[aboutLang].historyPoints.map((point, index) => (
-          <div className="admin-fields admin-fields--two" key={index}>
-            <label>Place<input value={point.place} onChange={e => updateHistoryPoint(index, 'place', e.target.value)} /></label>
-            <label>Detail<input value={point.detail} onChange={e => updateHistoryPoint(index, 'detail', e.target.value)} /></label>
-            <button type="button" className="admin-delete" onClick={() => removeHistoryPoint(index)}>Remove</button>
+      {/* 2. Story Section */}
+      <section style={cardBoxStyle}>
+        <span className="admin-kicker">Step 2 · Story section</span>
+        <h3 style={{ margin: '4px 0 14px' }}>Main story heading & intro</h3>
+        <div className="admin-fields admin-fields--two">
+          <label>Section label
+            <input style={inputBoxStyle} value={activeCopy.storyKicker} onChange={e => updateAboutCopy('storyKicker', e.target.value)} />
+          </label>
+          <label>Main heading
+            <input style={inputBoxStyle} value={activeCopy.storyTitle} onChange={e => updateAboutCopy('storyTitle', e.target.value)} />
+          </label>
+        </div>
+        <label style={{ display: 'block', marginTop: '12px' }}>Introduction text
+          <textarea style={inputBoxStyle} rows={3} value={activeCopy.storyText} onChange={e => updateAboutCopy('storyText', e.target.value)} />
+        </label>
+      </section>
+
+      {/* 3. History Highlights */}
+      <section style={cardBoxStyle}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', gap: '12px', flexWrap: 'wrap' }}>
+          <div>
+            <span className="admin-kicker">Step 3 · Destination stories</span>
+            <h3 style={{ margin: '4px 0 0' }}>History highlights ({activeCopy.historyPoints.length})</h3>
           </div>
-        ))}
-        <button type="button" className="admin-secondary" onClick={addHistoryPoint}>＋ Add place highlight</button>
-      </div>
+          <button type="button" className="admin-secondary" onClick={addHistoryPoint}>＋ Add new place</button>
+        </div>
 
-      <div className="admin-fields admin-fields--two">
-        {photoSlots.map(slot => (
-          <label className="admin-file" key={slot.key}>
-            {slot.label}
-            <img src={getPublicFile(about.photos[slot.key])} alt={slot.label} style={{ maxWidth: 160, maxHeight: 110, objectFit: 'cover', display: 'block', margin: '6px 0' }} onError={e => { e.currentTarget.style.visibility = 'hidden' }} />
-            <input type="file" accept="image/*" onChange={e => {
-              const file = e.target.files?.[0]
-              setAboutFiles(prev => {
-                const next = { ...prev }
-                if (file) next[slot.key] = file
-                else delete next[slot.key]
-                return next
-              })
-            }} />
-            <small>{aboutFiles[slot.key]?.name || 'Current photo kept unless you choose a replacement.'}</small>
-          </label>
-        ))}
-      </div>
+        <div style={{ display: 'grid', gap: '12px' }}>
+          {activeCopy.historyPoints.map((point, index) => (
+            <div key={index} style={{ padding: '14px', borderRadius: '10px', background: '#f8f6f1', border: '1px solid rgba(25, 45, 35, 0.1)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                <strong>#{index + 1} · {point.place || 'New place'}</strong>
+                <button type="button" className="admin-delete" onClick={() => removeHistoryPoint(index)}>Delete</button>
+              </div>
+              <div className="admin-fields admin-fields--two">
+                <label>Place name
+                  <input style={inputBoxStyle} placeholder="e.g. Andaman" value={point.place} onChange={e => updateHistoryPoint(index, 'place', e.target.value)} />
+                </label>
+                <label>Story / description
+                  <textarea style={inputBoxStyle} rows={2} placeholder="Write details shown on the website" value={point.detail} onChange={e => updateHistoryPoint(index, 'detail', e.target.value)} />
+                </label>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Photos */}
+      <section style={cardBoxStyle}>
+        <span className="admin-kicker">Step 4 · About photos (shared across English & Marathi)</span>
+        <h3 style={{ margin: '4px 0 14px' }}>Photos</h3>
+        <div className="admin-fields admin-fields--two">
+          {photoSlots.map(slot => {
+            const selectedFile = aboutFiles[slot.key]
+            const previewUrl = selectedFile ? URL.createObjectURL(selectedFile) : getPublicFile(about.photos[slot.key])
+            const isDefaultPhoto = about.photos[slot.key] === defaultAbout.photos[slot.key] && !selectedFile
+            return (
+              <div key={slot.key} style={{ padding: '14px', borderRadius: '10px', background: '#f8f6f1', border: '1px solid rgba(25, 45, 35, 0.1)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                  <strong>{slot.title}</strong>
+                  {!isDefaultPhoto && (
+                    <button type="button" className="admin-delete" onClick={() => resetPhotoSlot(slot.key)}>Reset photo</button>
+                  )}
+                </div>
+                <small style={{ display: 'block', opacity: 0.75, marginBottom: '8px' }}>{slot.hint}</small>
+                <img
+                  src={previewUrl}
+                  alt={slot.title}
+                  style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '8px', display: 'block', marginBottom: '10px', background: '#eae6dc' }}
+                  onError={e => { e.currentTarget.style.visibility = 'hidden' }}
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={e => {
+                    const file = e.target.files?.[0]
+                    setAboutFiles(prev => {
+                      const next = { ...prev }
+                      if (file) next[slot.key] = file
+                      else delete next[slot.key]
+                      return next
+                    })
+                  }}
+                />
+                <small style={{ display: 'block', marginTop: '6px' }}>
+                  {selectedFile ? `Ready to upload: ${selectedFile.name}` : 'Choose a new JPG/PNG/WebP image to replace this photo.'}
+                </small>
+              </div>
+            )
+          })}
+        </div>
+      </section>
 
       {error && <div className="admin-message is-error" role="alert">{error}</div>}
       {notice && <div className="admin-message" role="status">{notice}</div>}

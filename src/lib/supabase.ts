@@ -78,17 +78,46 @@ function saveSession(session: AuthSession | null) {
   else localStorage.removeItem(authStorageKey)
 }
 
+async function refreshSession(current: AuthSession): Promise<AuthSession | null> {
+  if (!projectUrl || !publishableKey || !current.refresh_token) return null
+  const res = await fetch(`${projectUrl}/auth/v1/token?grant_type=refresh_token`, {
+    method: 'POST',
+    headers: { apikey: publishableKey, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ refresh_token: current.refresh_token }),
+  })
+  if (!res.ok) {
+    saveSession(null)
+    return null
+  }
+  const next = (await res.json()) as AuthSession
+  saveSession(next)
+  return next
+}
+
 async function request<T>(path: string, options: RequestInit = {}, token?: string): Promise<T> {
   if (!projectUrl || !publishableKey) throw new Error('Supabase environment variables are missing.')
-  const response = await fetch(`${projectUrl}${path}`, {
+  const run = (authToken?: string) => fetch(`${projectUrl}${path}`, {
     ...options,
     headers: {
       apikey: publishableKey,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       ...(options.body && !(options.body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
       ...options.headers,
     },
   })
+
+  let response = await run(token)
+  if (response.status === 401 && token) {
+    const current = readSession()
+    const refreshed = current ? await refreshSession(current) : null
+    if (refreshed?.access_token) {
+      response = await run(refreshed.access_token)
+    } else {
+      saveSession(null)
+      throw new Error('Session expired. Please sign out and sign in again.')
+    }
+  }
+
   if (!response.ok) {
     const body = await response.text()
     let message = body
