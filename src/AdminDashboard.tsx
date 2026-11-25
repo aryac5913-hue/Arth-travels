@@ -215,10 +215,12 @@
 
 
 
+
+
 import { useEffect, useMemo, useState, type CSSProperties, type FormEvent } from 'react'
-import { defaultAbout, type AboutContent, type AboutCopy, type Language } from './lib/about'
+import { defaultAbout, type AboutContent, type AboutCopy, type AboutSection, type Language } from './lib/about'
 import {
-  deleteMemory, deleteTrip, deleteUploadedFile, fetchAboutContent, fetchAdminMemories, fetchTrips, getPublicFile, readSession, saveAboutContent, saveMemory, saveTrip, signIn, signOut, supabaseReady, uploadFile,
+  deleteAboutSection, deleteMemory, deleteTrip, deleteUploadedFile, fetchAboutContent, fetchAdminAboutSections, fetchAdminMemories, fetchTrips, getPublicFile, readSession, saveAboutContent, saveAboutSection, saveMemory, saveTrip, signIn, signOut, supabaseReady, uploadFile,
   type AuthSession, type ManagedMemory, type ManagedTrip, type TripCategory,
 } from './lib/supabase'
 
@@ -252,6 +254,26 @@ const inputBoxStyle: CSSProperties = {
   background: '#fcfbf8',
   font: 'inherit',
   color: 'inherit',
+}
+
+function isVideoPath(path: string) {
+  return /\.(mp4|webm|mov)(\?|$)/i.test(path)
+}
+
+function emptyCustomSection(): AboutSection {
+  return {
+    id: '',
+    type: 'testimonial',
+    title_en: '',
+    title_mr: '',
+    body_en: '',
+    body_mr: '',
+    author_en: '',
+    author_mr: '',
+    image_path: '',
+    sort_order: 100,
+    published: true,
+  }
 }
 
 function mergeAbout(source?: AboutContent | null): AboutContent {
@@ -304,6 +326,9 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
   const [rows, setRows] = useState<ManagedTrip[]>([])
   const [memories, setMemories] = useState<ManagedMemory[]>([])
   const [about, setAbout] = useState<AboutContent>(() => mergeAbout())
+  const [aboutSections, setAboutSections] = useState<AboutSection[]>([])
+  const [sectionForm, setSectionForm] = useState<AboutSection>(() => emptyCustomSection())
+  const [sectionMediaFile, setSectionMediaFile] = useState<File | null>(null)
   const [aboutLang, setAboutLang] = useState<Language>('en')
   const [aboutFiles, setAboutFiles] = useState<Partial<Record<PhotoSlot, File>>>({})
   const [section, setSection] = useState<'trips' | 'memories' | 'about'>('trips')
@@ -321,14 +346,16 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
   const [query, setQuery] = useState('')
 
   const reload = async (accessToken: string) => {
-    const [trips, videos, aboutData] = await Promise.all([
+    const [trips, videos, aboutData, customSections] = await Promise.all([
       fetchTrips(accessToken),
       fetchAdminMemories(accessToken),
       fetchAboutContent(),
+      fetchAdminAboutSections(accessToken).catch(() => []),
     ])
     setRows(trips)
     setMemories(videos)
     setAbout(mergeAbout(aboutData))
+    setAboutSections(customSections)
   }
   useEffect(() => { if (session) reload(session.access_token).catch(e => setError(e.message)) }, [session])
 
@@ -348,8 +375,10 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
 
   const startNew = () => { setForm(emptyTrip()); setThumbFile(null); setEnglishFile(null); setMarathiFile(null); setError(''); setNotice('') }
   const startNewMemory = () => { setMemoryForm(emptyMemory()); setVideoFile(null); setError(''); setNotice('') }
+  const startNewCustomSection = () => { setSectionForm(emptyCustomSection()); setSectionMediaFile(null); setError(''); setNotice('') }
   const edit = (trip: ManagedTrip) => { setForm({ ...trip }); setThumbFile(null); setEnglishFile(null); setMarathiFile(null); setError(''); setNotice('') }
   const editMemory = (memory: ManagedMemory) => { setMemoryForm({ ...memory }); setVideoFile(null); setError(''); setNotice('') }
+  const editCustomSection = (item: AboutSection) => { setSectionForm({ ...item }); setSectionMediaFile(null); setError(''); setNotice('') }
   const update = <K extends keyof ManagedTrip>(key: K, value: ManagedTrip[K]) => setForm(current => ({ ...current, [key]: value }))
 
   const updateAboutCopy = <K extends keyof Omit<AboutCopy, 'historyPoints'>>(key: K, value: AboutCopy[K]) => {
@@ -404,14 +433,15 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
   }
 
   const handleResetAllAbout = async () => {
-    if (!session || !window.confirm('Reset ALL About text (English & Marathi) and photos back to the original website defaults?')) return
+    const currentSession = readSession() || session
+    if (!currentSession || !window.confirm('Reset ALL About text (English & Marathi) and photos back to the original website defaults?')) return
     setBusy(true); setError(''); setNotice('')
     try {
       const oldPhotos = Object.values(about.photos)
       const fresh = mergeAbout(defaultAbout)
-      await saveAboutContent(fresh, session.access_token)
+      await saveAboutContent(fresh, currentSession.access_token)
       for (const path of oldPhotos) {
-        await deleteUploadedFile(path, session.access_token).catch(() => {})
+        await deleteUploadedFile(path, currentSession.access_token).catch(() => {})
       }
       setAbout(fresh)
       setAboutFiles({})
@@ -440,15 +470,62 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
       }
       const payload: AboutContent = { ...about, id: 'main', photos: nextPhotos }
       await saveAboutContent(payload, currentSession.access_token)
-      const latestSession = readSession()
-      if (latestSession) setSession(latestSession)
+      const latestSession = readSession() || currentSession
+      setSession(latestSession)
       for (const oldPath of replacedPaths) {
-        await deleteUploadedFile(oldPath, (latestSession || currentSession).access_token).catch(() => {})
+        await deleteUploadedFile(oldPath, latestSession.access_token).catch(() => {})
       }
       setAbout(mergeAbout(payload))
       setAboutFiles({})
-      setNotice('About section saved! Refresh the public website to view your changes.')
+      setNotice('About section saved! Refresh www.arthtravels.com to view changes.')
     } catch (e) { setError(e instanceof Error ? e.message : 'Unable to save About section.') }
+    finally { setBusy(false) }
+  }
+
+  const handleSaveCustomSection = async (event: FormEvent) => {
+    event.preventDefault()
+    const currentSession = readSession() || session
+    if (!currentSession) return
+    const id = sectionForm.id.trim() || `sec-${slugify(sectionForm.title_en || sectionForm.author_en || 'item')}-${Date.now().toString(36)}`
+    if (!sectionForm.title_en.trim() && !sectionForm.body_en.trim()) {
+      setError('Please enter at least an English heading or description.')
+      return
+    }
+    setBusy(true); setError(''); setNotice('')
+    try {
+      const mediaPath = sectionMediaFile
+        ? await uploadFile(sectionMediaFile, currentSession.access_token, 'about-sections')
+        : sectionForm.image_path
+
+      const record: AboutSection = { ...sectionForm, id, image_path: mediaPath || '' }
+      await saveAboutSection(record, currentSession.access_token)
+
+      const latestSession = readSession() || currentSession
+      setSession(latestSession)
+      if (sectionForm.image_path && sectionMediaFile && sectionForm.image_path !== mediaPath) {
+        await deleteUploadedFile(sectionForm.image_path, latestSession.access_token).catch(() => {})
+      }
+      await reload(latestSession.access_token)
+      setSectionForm(record)
+      setSectionMediaFile(null)
+      setNotice('Section / Testimonial saved! It will now appear on www.arthtravels.com.')
+    } catch (e) { setError(e instanceof Error ? e.message : 'Unable to save section.') }
+    finally { setBusy(false) }
+  }
+
+  const handleDeleteCustomSection = async (item: AboutSection) => {
+    const currentSession = readSession() || session
+    if (!currentSession || !window.confirm(`Delete "${item.title_en || item.author_en || 'this section'}" permanently?`)) return
+    setBusy(true); setError(''); setNotice('')
+    try {
+      await deleteAboutSection(item.id, currentSession.access_token)
+      if (item.image_path) {
+        await deleteUploadedFile(item.image_path, currentSession.access_token).catch(() => {})
+      }
+      setAboutSections(prev => prev.filter(s => s.id !== item.id))
+      if (sectionForm.id === item.id) startNewCustomSection()
+      setNotice('Section deleted.')
+    } catch (e) { setError(e instanceof Error ? e.message : 'Unable to delete section.') }
     finally { setBusy(false) }
   }
 
@@ -544,14 +621,14 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
     <button className="admin-primary" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
   </form></main>
 
-  const headingTitle = section === 'trips' ? 'travel' : section === 'memories' ? 'Travel memories' : 'About section'
+  const headingTitle = section === 'trips' ? 'travel' : section === 'memories' ? 'Travel memories' : 'About & Testimonials'
   const activeCopy = about[aboutLang]
 
   return <main className="admin-page admin-workspace"><header className="admin-topbar"><a className="admin-back" href="#/">← Public website</a><div><span className="admin-kicker">Arth Travels · Admin</span><h1>Manage {headingTitle}</h1></div><button className="admin-secondary" onClick={() => { signOut(); setSession(null) }}>Sign out</button></header>
     <nav className="admin-section-tabs" aria-label="Admin sections">
       <button className={section === 'trips' ? 'is-active' : ''} onClick={() => { setSection('trips'); setQuery(''); setError(''); setNotice('') }}>Destinations & MICE</button>
       <button className={section === 'memories' ? 'is-active' : ''} onClick={() => { setSection('memories'); setQuery(''); setError(''); setNotice('') }}>Travel memories</button>
-      <button className={section === 'about' ? 'is-active' : ''} onClick={() => { setSection('about'); setQuery(''); setError(''); setNotice('') }}>About section</button>
+      <button className={section === 'about' ? 'is-active' : ''} onClick={() => { setSection('about'); setQuery(''); setError(''); setNotice('') }}>About & Testimonials</button>
     </nav>
     {section === 'trips' ? <div className="admin-layout"><section className="admin-list"><div className="admin-list__top"><div><span className="admin-kicker">Tour library · lower sort numbers appear first</span><h2>{combinedRows.length} destinations</h2></div><button className="admin-primary" onClick={startNew}>＋ Add destination</button></div>
       <input className="admin-search" type="search" placeholder="Search destinations" value={query} onChange={e => setQuery(e.target.value)} />
@@ -584,138 +661,197 @@ export default function AdminDashboard({ initialTrips, initialMemories }: { init
       <label className="admin-toggle"><input type="checkbox" checked={memoryForm.published} onChange={e => setMemoryForm(current => ({ ...current, published: e.target.checked }))} /><span><strong>Show on Travel Memories page</strong><small>Hidden videos stay in this dashboard.</small></span></label>
       {error && <div className="admin-message is-error" role="alert">{error}</div>}{notice && <div className="admin-message" role="status">{notice}</div>}
       <button className="admin-primary admin-save" disabled={busy}>{busy ? 'Saving…' : 'Save video'}</button>
-    </form></div> : <form className="admin-editor" onSubmit={handleSaveAbout} style={{ maxWidth: '980px', margin: '0 auto' }}>
-      <div className="admin-editor__heading">
-        <div>
-          <span className="admin-kicker">Edit live website content</span>
-          <h2>About Page ({aboutLang === 'en' ? 'English' : 'Marathi'})</h2>
-          <small>Edit text in both English and Marathi tabs below, then click Save at the bottom.</small>
-        </div>
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <div className="admin-section-tabs" aria-label="About language" style={{ margin: 0 }}>
-            <button type="button" className={aboutLang === 'en' ? 'is-active' : ''} onClick={() => setAboutLang('en')}>English</button>
-            <button type="button" className={aboutLang === 'mr' ? 'is-active' : ''} onClick={() => setAboutLang('mr')}>मराठी (Marathi)</button>
-          </div>
-          <button type="button" className="admin-delete" disabled={busy} onClick={handleResetAllAbout}>Reset all to default</button>
-        </div>
-      </div>
-
-      {/* 1. Founder Profile */}
-      <section style={cardBoxStyle}>
-        <span className="admin-kicker">Step 1 · Founder profile</span>
-        <h3 style={{ margin: '4px 0 14px' }}>Founder details</h3>
-        <div className="admin-fields admin-fields--two">
-          <label>Small label above name
-            <input style={inputBoxStyle} value={activeCopy.founderKicker} onChange={e => updateAboutCopy('founderKicker', e.target.value)} />
-          </label>
-          <label>Founder name
-            <input style={inputBoxStyle} value={activeCopy.founderName} onChange={e => updateAboutCopy('founderName', e.target.value)} />
-          </label>
-        </div>
-        <label style={{ display: 'block', marginTop: '12px' }}>Founder role / title
-          <input style={inputBoxStyle} value={activeCopy.founderRole} onChange={e => updateAboutCopy('founderRole', e.target.value)} />
-        </label>
-        <label style={{ display: 'block', marginTop: '12px' }}>Founder introduction paragraph
-          <textarea style={inputBoxStyle} rows={4} value={activeCopy.founderBio} onChange={e => updateAboutCopy('founderBio', e.target.value)} />
-        </label>
-      </section>
-
-      {/* 2. Story Section */}
-      <section style={cardBoxStyle}>
-        <span className="admin-kicker">Step 2 · Story section</span>
-        <h3 style={{ margin: '4px 0 14px' }}>Main story heading & intro</h3>
-        <div className="admin-fields admin-fields--two">
-          <label>Section label
-            <input style={inputBoxStyle} value={activeCopy.storyKicker} onChange={e => updateAboutCopy('storyKicker', e.target.value)} />
-          </label>
-          <label>Main heading
-            <input style={inputBoxStyle} value={activeCopy.storyTitle} onChange={e => updateAboutCopy('storyTitle', e.target.value)} />
-          </label>
-        </div>
-        <label style={{ display: 'block', marginTop: '12px' }}>Introduction text
-          <textarea style={inputBoxStyle} rows={3} value={activeCopy.storyText} onChange={e => updateAboutCopy('storyText', e.target.value)} />
-        </label>
-      </section>
-
-      {/* 3. History Highlights */}
-      <section style={cardBoxStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', gap: '12px', flexWrap: 'wrap' }}>
+    </form></div> : <div style={{ maxWidth: '1040px', margin: '0 auto', display: 'grid', gap: '24px' }}>
+      {/* PART A: Main About Page Content */}
+      <form className="admin-editor" onSubmit={handleSaveAbout}>
+        <div className="admin-editor__heading">
           <div>
-            <span className="admin-kicker">Step 3 · Destination stories</span>
-            <h3 style={{ margin: '4px 0 0' }}>History highlights ({activeCopy.historyPoints.length})</h3>
+            <span className="admin-kicker">Part 1 · Main About Page</span>
+            <h2>About Page ({aboutLang === 'en' ? 'English' : 'Marathi'})</h2>
+            <small>Edit founder details, story & photos, then click "Save About section".</small>
           </div>
-          <button type="button" className="admin-secondary" onClick={addHistoryPoint}>＋ Add new place</button>
-        </div>
-
-        <div style={{ display: 'grid', gap: '12px' }}>
-          {activeCopy.historyPoints.map((point, index) => (
-            <div key={index} style={{ padding: '14px', borderRadius: '10px', background: '#f8f6f1', border: '1px solid rgba(25, 45, 35, 0.1)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                <strong>#{index + 1} · {point.place || 'New place'}</strong>
-                <button type="button" className="admin-delete" onClick={() => removeHistoryPoint(index)}>Delete</button>
-              </div>
-              <div className="admin-fields admin-fields--two">
-                <label>Place name
-                  <input style={inputBoxStyle} placeholder="e.g. Andaman" value={point.place} onChange={e => updateHistoryPoint(index, 'place', e.target.value)} />
-                </label>
-                <label>Story / description
-                  <textarea style={inputBoxStyle} rows={2} placeholder="Write details shown on the website" value={point.detail} onChange={e => updateHistoryPoint(index, 'detail', e.target.value)} />
-                </label>
-              </div>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div className="admin-section-tabs" aria-label="About language" style={{ margin: 0 }}>
+              <button type="button" className={aboutLang === 'en' ? 'is-active' : ''} onClick={() => setAboutLang('en')}>English</button>
+              <button type="button" className={aboutLang === 'mr' ? 'is-active' : ''} onClick={() => setAboutLang('mr')}>मराठी (Marathi)</button>
             </div>
-          ))}
+            <button type="button" className="admin-delete" disabled={busy} onClick={handleResetAllAbout}>Reset all to default</button>
+          </div>
         </div>
-      </section>
 
-      {/* 4. Photos */}
-      <section style={cardBoxStyle}>
-        <span className="admin-kicker">Step 4 · About photos (shared across English & Marathi)</span>
-        <h3 style={{ margin: '4px 0 14px' }}>Photos</h3>
-        <div className="admin-fields admin-fields--two">
-          {photoSlots.map(slot => {
-            const selectedFile = aboutFiles[slot.key]
-            const previewUrl = selectedFile ? URL.createObjectURL(selectedFile) : getPublicFile(about.photos[slot.key])
-            const isDefaultPhoto = about.photos[slot.key] === defaultAbout.photos[slot.key] && !selectedFile
-            return (
-              <div key={slot.key} style={{ padding: '14px', borderRadius: '10px', background: '#f8f6f1', border: '1px solid rgba(25, 45, 35, 0.1)' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
-                  <strong>{slot.title}</strong>
-                  {!isDefaultPhoto && (
-                    <button type="button" className="admin-delete" onClick={() => resetPhotoSlot(slot.key)}>Reset photo</button>
-                  )}
+        <section style={cardBoxStyle}>
+          <span className="admin-kicker">Founder profile</span>
+          <h3 style={{ margin: '4px 0 14px' }}>Founder details</h3>
+          <div className="admin-fields admin-fields--two">
+            <label>Small label above name<input style={inputBoxStyle} value={activeCopy.founderKicker} onChange={e => updateAboutCopy('founderKicker', e.target.value)} /></label>
+            <label>Founder name<input style={inputBoxStyle} value={activeCopy.founderName} onChange={e => updateAboutCopy('founderName', e.target.value)} /></label>
+          </div>
+          <label style={{ display: 'block', marginTop: '12px' }}>Founder role / title<input style={inputBoxStyle} value={activeCopy.founderRole} onChange={e => updateAboutCopy('founderRole', e.target.value)} /></label>
+          <label style={{ display: 'block', marginTop: '12px' }}>Founder introduction paragraph<textarea style={inputBoxStyle} rows={4} value={activeCopy.founderBio} onChange={e => updateAboutCopy('founderBio', e.target.value)} /></label>
+        </section>
+
+        <section style={cardBoxStyle}>
+          <span className="admin-kicker">Story section</span>
+          <h3 style={{ margin: '4px 0 14px' }}>Main story heading & intro</h3>
+          <div className="admin-fields admin-fields--two">
+            <label>Section label<input style={inputBoxStyle} value={activeCopy.storyKicker} onChange={e => updateAboutCopy('storyKicker', e.target.value)} /></label>
+            <label>Main heading<input style={inputBoxStyle} value={activeCopy.storyTitle} onChange={e => updateAboutCopy('storyTitle', e.target.value)} /></label>
+          </div>
+          <label style={{ display: 'block', marginTop: '12px' }}>Introduction text<textarea style={inputBoxStyle} rows={3} value={activeCopy.storyText} onChange={e => updateAboutCopy('storyText', e.target.value)} /></label>
+        </section>
+
+        <section style={cardBoxStyle}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', gap: '12px', flexWrap: 'wrap' }}>
+            <div>
+              <span className="admin-kicker">Destination stories</span>
+              <h3 style={{ margin: '4px 0 0' }}>History highlights ({activeCopy.historyPoints.length})</h3>
+            </div>
+            <button type="button" className="admin-secondary" onClick={addHistoryPoint}>＋ Add new place</button>
+          </div>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {activeCopy.historyPoints.map((point, index) => (
+              <div key={index} style={{ padding: '14px', borderRadius: '10px', background: '#f8f6f1', border: '1px solid rgba(25, 45, 35, 0.1)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                  <strong>#{index + 1} · {point.place || 'New place'}</strong>
+                  <button type="button" className="admin-delete" onClick={() => removeHistoryPoint(index)}>Delete</button>
                 </div>
-                <small style={{ display: 'block', opacity: 0.75, marginBottom: '8px' }}>{slot.hint}</small>
-                <img
-                  src={previewUrl}
-                  alt={slot.title}
-                  style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '8px', display: 'block', marginBottom: '10px', background: '#eae6dc' }}
-                  onError={e => { e.currentTarget.style.visibility = 'hidden' }}
-                />
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={e => {
-                    const file = e.target.files?.[0]
-                    setAboutFiles(prev => {
-                      const next = { ...prev }
-                      if (file) next[slot.key] = file
-                      else delete next[slot.key]
-                      return next
-                    })
-                  }}
-                />
-                <small style={{ display: 'block', marginTop: '6px' }}>
-                  {selectedFile ? `Ready to upload: ${selectedFile.name}` : 'Choose a new JPG/PNG/WebP image to replace this photo.'}
-                </small>
+                <div className="admin-fields admin-fields--two">
+                  <label>Place name<input style={inputBoxStyle} value={point.place} onChange={e => updateHistoryPoint(index, 'place', e.target.value)} /></label>
+                  <label>Story / description<textarea style={inputBoxStyle} rows={2} value={point.detail} onChange={e => updateHistoryPoint(index, 'detail', e.target.value)} /></label>
+                </div>
               </div>
-            )
-          })}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
 
-      {error && <div className="admin-message is-error" role="alert">{error}</div>}
-      {notice && <div className="admin-message" role="status">{notice}</div>}
-      <button className="admin-primary admin-save" disabled={busy}>{busy ? 'Saving…' : 'Save About section'}</button>
-    </form>}
+        <section style={cardBoxStyle}>
+          <span className="admin-kicker">About photos (shared across English & Marathi)</span>
+          <h3 style={{ margin: '4px 0 14px' }}>Photos</h3>
+          <div className="admin-fields admin-fields--two">
+            {photoSlots.map(slot => {
+              const selectedFile = aboutFiles[slot.key]
+              const previewUrl = selectedFile ? URL.createObjectURL(selectedFile) : getPublicFile(about.photos[slot.key])
+              const isDefaultPhoto = about.photos[slot.key] === defaultAbout.photos[slot.key] && !selectedFile
+              return (
+                <div key={slot.key} style={{ padding: '14px', borderRadius: '10px', background: '#f8f6f1', border: '1px solid rgba(25, 45, 35, 0.1)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px' }}>
+                    <strong>{slot.title}</strong>
+                    {!isDefaultPhoto && <button type="button" className="admin-delete" onClick={() => resetPhotoSlot(slot.key)}>Reset photo</button>}
+                  </div>
+                  <small style={{ display: 'block', opacity: 0.75, marginBottom: '8px' }}>{slot.hint}</small>
+                  <img src={previewUrl} alt={slot.title} style={{ width: '100%', height: '160px', objectFit: 'cover', borderRadius: '8px', display: 'block', marginBottom: '10px', background: '#eae6dc' }} onError={e => { e.currentTarget.style.visibility = 'hidden' }} />
+                  <input type="file" accept="image/*" onChange={e => {
+                    const file = e.target.files?.[0]
+                    setAboutFiles(prev => { const next = { ...prev }; if (file) next[slot.key] = file; else delete next[slot.key]; return next })
+                  }} />
+                  <small style={{ display: 'block', marginTop: '6px' }}>{selectedFile ? `Ready: ${selectedFile.name}` : 'Choose a new JPG/PNG/WebP image.'}</small>
+                </div>
+              )
+            })}
+          </div>
+        </section>
+
+        {error && <div className="admin-message is-error" role="alert">{error}</div>}
+        {notice && <div className="admin-message" role="status">{notice}</div>}
+        <button className="admin-primary admin-save" disabled={busy}>{busy ? 'Saving…' : 'Save About section'}</button>
+      </form>
+
+      {/* PART B: Add New Sections & Testimonials (with Photo or Video) */}
+      <div className="admin-layout">
+        <section className="admin-list">
+          <div className="admin-list__top">
+            <div>
+              <span className="admin-kicker">Part 2 · Dynamic Website Blocks</span>
+              <h2>{aboutSections.length} sections / testimonials</h2>
+            </div>
+            <button type="button" className="admin-primary" onClick={startNewCustomSection}>＋ Add new</button>
+          </div>
+          <div className="admin-trip-list">
+            {aboutSections.length === 0 && <p style={{ padding: '12px', opacity: 0.75 }}>No custom sections or testimonials added yet. Click “＋ Add new” to create one.</p>}
+            {aboutSections.map(item => (
+              <div className="admin-trip-row" key={item.id}>
+                <button type="button" className={`admin-trip ${sectionForm.id === item.id ? 'is-selected' : ''}`} onClick={() => editCustomSection(item)}>
+                  {item.image_path ? (
+                    isVideoPath(item.image_path)
+                      ? <video src={getPublicFile(item.image_path)} muted preload="none" />
+                      : <img src={getPublicFile(item.image_path)} alt="" />
+                  ) : null}
+                  <span>
+                    <small>{item.type === 'testimonial' ? 'Testimonial' : 'Custom section'} · Order {item.sort_order}</small>
+                    <strong>{item.title_en || item.author_en || 'Untitled section'}</strong>
+                  </span>
+                  <i className={item.published ? 'is-published' : ''}>{item.published ? 'Live' : 'Hidden'}</i>
+                </button>
+                <button type="button" className="admin-row-delete" title="Delete permanently" disabled={busy} onClick={() => handleDeleteCustomSection(item)}>×</button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <form className="admin-editor" onSubmit={handleSaveCustomSection}>
+          <div className="admin-editor__heading">
+            <div>
+              <span className="admin-kicker">Add / Edit Website Section</span>
+              <h2>{sectionForm.id ? 'Edit section / testimonial' : 'Add new section / testimonial'}</h2>
+            </div>
+            {sectionForm.id && (
+              <button type="button" className="admin-delete" disabled={busy} onClick={() => handleDeleteCustomSection(sectionForm)}>Delete</button>
+            )}
+          </div>
+
+          <div className="admin-fields admin-fields--two">
+            <label>Section type
+              <select style={inputBoxStyle} value={sectionForm.type} onChange={e => setSectionForm(prev => ({ ...prev, type: e.target.value as 'text' | 'testimonial' }))}>
+                <option value="testimonial">Customer Testimonial (Photo / Video + Review)</option>
+                <option value="text">Custom Info Section (Photo / Video + Story)</option>
+              </select>
+            </label>
+            <label>Display order
+              <input style={inputBoxStyle} type="number" value={sectionForm.sort_order} onChange={e => setSectionForm(prev => ({ ...prev, sort_order: Number(e.target.value) }))} />
+            </label>
+          </div>
+
+          <div className="admin-fields admin-fields--two">
+            <label>Heading / Highlight (English)<input style={inputBoxStyle} placeholder="e.g. Memorable Kerala Family Trip" value={sectionForm.title_en} onChange={e => setSectionForm(prev => ({ ...prev, title_en: e.target.value }))} /></label>
+            <label>Heading / Highlight (Marathi)<input style={inputBoxStyle} placeholder="मराठी शीर्षक" value={sectionForm.title_mr} onChange={e => setSectionForm(prev => ({ ...prev, title_mr: e.target.value }))} /></label>
+          </div>
+
+          <div className="admin-fields admin-fields--two">
+            <label>{sectionForm.type === 'testimonial' ? 'Review / Quote (English)' : 'Description (English)'}
+              <textarea style={inputBoxStyle} rows={3} placeholder="Write customer review or section text..." value={sectionForm.body_en} onChange={e => setSectionForm(prev => ({ ...prev, body_en: e.target.value }))} />
+            </label>
+            <label>{sectionForm.type === 'testimonial' ? 'Review / Quote (Marathi)' : 'Description (Marathi)'}
+              <textarea style={inputBoxStyle} rows={3} placeholder="मराठी मजकूर..." value={sectionForm.body_mr} onChange={e => setSectionForm(prev => ({ ...prev, body_mr: e.target.value }))} />
+            </label>
+          </div>
+
+          <div className="admin-fields admin-fields--two">
+            <label>{sectionForm.type === 'testimonial' ? 'Customer Name & City (English)' : 'Subtitle / Caption (English)'}
+              <input style={inputBoxStyle} placeholder="e.g. Rajesh Kulkarni, Pune" value={sectionForm.author_en} onChange={e => setSectionForm(prev => ({ ...prev, author_en: e.target.value }))} />
+            </label>
+            <label>{sectionForm.type === 'testimonial' ? 'Customer Name & City (Marathi)' : 'Subtitle / Caption (Marathi)'}
+              <input style={inputBoxStyle} placeholder="उदा. राजेश कुलकर्णी, पुणे" value={sectionForm.author_mr} onChange={e => setSectionForm(prev => ({ ...prev, author_mr: e.target.value }))} />
+            </label>
+          </div>
+
+          <label className="admin-file">Photo or MP4 Video (Optional)
+            {sectionForm.image_path && !sectionMediaFile && (
+              isVideoPath(sectionForm.image_path)
+                ? <video src={getPublicFile(sectionForm.image_path)} controls style={{ width: '100%', maxHeight: '180px', borderRadius: '8px', margin: '8px 0' }} />
+                : <img src={getPublicFile(sectionForm.image_path)} alt="" style={{ width: '100%', maxHeight: '180px', objectFit: 'cover', borderRadius: '8px', margin: '8px 0' }} />
+            )}
+            <input type="file" accept="image/*,video/mp4,.mp4" onChange={e => setSectionMediaFile(e.target.files?.[0] || null)} />
+            <small>{sectionMediaFile ? `Selected: ${sectionMediaFile.name}` : 'Upload a photo (JPG/PNG/WebP) or video (MP4 up to 50 MB).'}</small>
+          </label>
+
+          <label className="admin-toggle">
+            <input type="checkbox" checked={sectionForm.published} onChange={e => setSectionForm(prev => ({ ...prev, published: e.target.checked }))} />
+            <span><strong>Show on public website (www.arthtravels.com)</strong><small>Uncheck to hide without deleting.</small></span>
+          </label>
+
+          <button className="admin-primary admin-save" disabled={busy}>{busy ? 'Saving…' : 'Save section / testimonial'}</button>
+        </form>
+      </div>
+    </div>}
   </main>
 }
