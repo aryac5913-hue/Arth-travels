@@ -1,3 +1,5 @@
+import type { AboutContent, AboutSection } from './about'
+
 export type TripCategory = 'domestic' | 'international' | 'mice' | 'pilgrimage'
 
 export type ManagedTrip = {
@@ -21,6 +23,38 @@ export type ManagedMemory = {
   published: boolean
   sort_order: number
   created_at?: string
+}
+
+export async function fetchAboutContent(): Promise<AboutContent | null> {
+  if (!supabaseReady) return null
+  const rows = await request<{ content: AboutContent }[]>('/rest/v1/about_page_content?id=eq.main&select=content')
+  return rows[0]?.content || null
+}
+
+export async function saveAboutContent(content: AboutContent, token: string) {
+  return request<AboutContent[]>('/rest/v1/about_page_content?on_conflict=id', {
+    method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=representation' },
+    body: JSON.stringify({ id: 'main', content }),
+  }, token)
+}
+
+export async function fetchAboutSections(): Promise<AboutSection[]> {
+  if (!supabaseReady) return []
+  return request<AboutSection[]>('/rest/v1/about_sections?select=*&published=eq.true&order=sort_order.asc,created_at.asc')
+}
+
+export async function fetchAdminAboutSections(token: string): Promise<AboutSection[]> {
+  return request<AboutSection[]>('/rest/v1/about_sections?select=*&order=sort_order.asc,created_at.asc', {}, token)
+}
+
+export async function saveAboutSection(section: Omit<AboutSection, 'created_at'>, token: string) {
+  return request<AboutSection[]>('/rest/v1/about_sections?on_conflict=id', {
+    method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=representation' }, body: JSON.stringify(section),
+  }, token)
+}
+
+export async function deleteAboutSection(id: string, token: string) {
+  return request<void>(`/rest/v1/about_sections?id=eq.${encodeURIComponent(id)}`, { method: 'DELETE' }, token)
 }
 
 const projectUrl = import.meta.env.VITE_SUPABASE_URL?.replace(/\/$/, '')
