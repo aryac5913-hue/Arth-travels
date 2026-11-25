@@ -1,6 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import AdminDashboard, { createAdminSeed } from './AdminDashboard'
-import { fetchMemories, fetchPublishedTrips, getPublicFile, supabaseReady, type ManagedMemory, type ManagedTrip, type TripCategory } from './lib/supabase'
+import { defaultAbout, type AboutContent, type AboutSection } from './lib/about'
+import {
+  fetchAboutContent,
+  fetchAboutSections,
+  fetchMemories,
+  fetchPublishedTrips,
+  getPublicFile,
+  supabaseReady,
+  type ManagedMemory,
+  type ManagedTrip,
+  type TripCategory,
+} from './lib/supabase'
+
 
 type Language = 'en' | 'mr'
 type Page = 'home' | 'destinations' | 'about' | 'contact' | 'memories' | 'admin'
@@ -422,28 +434,180 @@ function Destinations({ language, managedTrips }: { language: Language; managedT
   </main>
 }
 
+function resolveAboutMedia(path: string | undefined) {
+  if (!path) return ''
+  if (path.startsWith('site-assets:')) return assetUrl(path.slice('site-assets:'.length))
+  return getPublicFile(path)
+}
+
+function isVideoMedia(path: string) {
+  return /\.(mp4|webm|mov)(\?|$)/i.test(path)
+}
+
 function About({ language }: { language: Language }) {
   const t = content[language]
+  const [aboutData, setAboutData] = useState<AboutContent>(defaultAbout)
+  const [customSections, setCustomSections] = useState<AboutSection[]>([])
+
+  useEffect(() => {
+    let active = true
+    Promise.all([
+      fetchAboutContent().catch(() => null),
+      fetchAboutSections().catch(() => []),
+    ]).then(([savedAbout, sections]) => {
+      if (!active) return
+      if (savedAbout) {
+        setAboutData({
+          id: 'main',
+          en: {
+            ...defaultAbout.en,
+            ...savedAbout.en,
+            historyPoints: savedAbout.en?.historyPoints?.length ? savedAbout.en.historyPoints : defaultAbout.en.historyPoints,
+          },
+          mr: {
+            ...defaultAbout.mr,
+            ...savedAbout.mr,
+            historyPoints: savedAbout.mr?.historyPoints?.length ? savedAbout.mr.historyPoints : defaultAbout.mr.historyPoints,
+          },
+          photos: {
+            ...defaultAbout.photos,
+            ...savedAbout.photos,
+          },
+        })
+      }
+      setCustomSections(sections)
+    })
+    return () => { active = false }
+  }, [])
+
+  const copy = aboutData[language]
+  const testimonials = customSections.filter(item => item.type === 'testimonial')
+  const extraSections = customSections.filter(item => item.type !== 'testimonial')
+
   const stats = [
     { value: t.travellersValue, label: t.travellersLabel, copy: t.travellersCopy },
     { value: t.monthsValue, label: t.monthsLabel, copy: t.monthsCopy },
     { value: t.corporateValue, label: t.corporateLabel, copy: t.corporateCopy },
     { value: t.futureValue, label: t.futureLabel, copy: t.futureCopy },
   ]
+
   return <main>
     <section className="founder-feature section">
-      <div className="founder-gallery" aria-label={language === 'en' ? 'Photos of Anand Dave' : 'Anand Dave यांची छायाचित्रे'}>
-        <figure className="founder-gallery__main"><img src={assetUrl('assets/founder photos/anand-dave.jpg')} alt={language === 'en' ? 'Portrait of Arth Travels founder Anand Dave' : 'Arth Travels चे संस्थापक Anand Dave यांचे छायाचित्र'} /><figcaption><strong>Anand Dave</strong><span>{language === 'en' ? 'Founder, Arth Travels' : 'संस्थापक, Arth Travels'}</span></figcaption></figure>
+      <div className="founder-gallery" aria-label={language === 'en' ? `Photos of ${copy.founderName}` : `${copy.founderName} यांची छायाचित्रे`}>
+        <figure className="founder-gallery__main">
+          <img src={resolveAboutMedia(aboutData.photos.main)} alt={language === 'en' ? `Portrait of ${copy.founderName}` : `${copy.founderName} यांचे छायाचित्र`} />
+          <figcaption><strong>{copy.founderName}</strong><span>{copy.founderRole}</span></figcaption>
+        </figure>
         <div className="founder-gallery__secondary">
-          <figure><img src={assetUrl('assets/founder photos/3.jpg')} alt={language === 'en' ? 'Anand Dave addressing an audience' : 'श्रोत्यांना संबोधित करताना Anand Dave'} /><figcaption>{language === 'en' ? 'Sharing ideas with an audience' : 'श्रोत्यांशी विचारांची देवाणघेवाण'}</figcaption></figure>
-          <figure><img src={assetUrl('assets/founder photos/5.jpg')} alt={language === 'en' ? 'Anand Dave at a public recognition event' : 'सार्वजनिक सत्कार समारंभात Anand Dave'} /><figcaption>{language === 'en' ? 'A moment from a community event' : 'समुदायिक कार्यक्रमातील एक क्षण'}</figcaption></figure>
+          <figure>
+            <img src={resolveAboutMedia(aboutData.photos.second)} alt={copy.storyTitle} />
+            <figcaption>{language === 'en' ? 'Sharing ideas with an audience' : 'श्रोत्यांशी विचारांची देवाणघेवाण'}</figcaption>
+          </figure>
+          <figure>
+            <img src={resolveAboutMedia(aboutData.photos.third)} alt={copy.storyTitle} />
+            <figcaption>{language === 'en' ? 'A moment from a community event' : 'समुदायिक कार्यक्रमातील एक क्षण'}</figcaption>
+          </figure>
         </div>
       </div>
-      <div className="founder-feature__copy"><span className="kicker">{t.founderKicker}</span><h2>{t.founderName}</h2><span className="founder-feature__role">{t.founderRole}</span><p>{t.founderBio}</p>
-        <aside className="founder-feature__story"><span>{t.storyKicker}</span><h3>{t.storyTitle}</h3><p>{t.storyText}</p><ul>{t.historyPoints.map(point => <li key={point.place}><strong>{point.place}</strong><span>{point.detail}</span></li>)}</ul></aside>
+      <div className="founder-feature__copy">
+        <span className="kicker">{copy.founderKicker}</span>
+        <h2>{copy.founderName}</h2>
+        <span className="founder-feature__role">{copy.founderRole}</span>
+        <p>{copy.founderBio}</p>
+        <aside className="founder-feature__story">
+          <span>{copy.storyKicker}</span>
+          <h3>{copy.storyTitle}</h3>
+          <p>{copy.storyText}</p>
+          <ul>
+            {copy.historyPoints.map((point, index) => (
+              <li key={`${point.place}-${index}`}><strong>{point.place}</strong><span>{point.detail}</span></li>
+            ))}
+          </ul>
+        </aside>
       </div>
     </section>
-    <section className="journey-stats-wrap"><div className="journey-stats"><span className="journey-stats__kicker">{t.journeyKicker}</span><div className="journey-stats__grid">{stats.map(stat => <article className="journey-stat" key={stat.label}><strong>{stat.value}</strong><h3>{stat.label}</h3><p>{stat.copy}</p></article>)}</div><div className="journey-stats__footer">{t.journeyTitle}</div></div></section>
+
+    <section className="journey-stats-wrap">
+      <div className="journey-stats">
+        <span className="journey-stats__kicker">{t.journeyKicker}</span>
+        <div className="journey-stats__grid">
+          {stats.map(stat => (
+            <article className="journey-stat" key={stat.label}>
+              <strong>{stat.value}</strong>
+              <h3>{stat.label}</h3>
+              <p>{stat.copy}</p>
+            </article>
+          ))}
+        </div>
+        <div className="journey-stats__footer">{t.journeyTitle}</div>
+      </div>
+    </section>
+
+    {extraSections.length > 0 && (
+      <section className="memory-video-collection section" aria-label={language === 'mr' ? 'अतिरिक्त विभाग' : 'More from Arth Travels'}>
+        <div className="gallery-heading">
+          <h2>{language === 'mr' ? 'अधिक माहिती' : 'More About Us'}</h2>
+          <span>{extraSections.length}</span>
+        </div>
+        <div className="memory-video-grid">
+          {extraSections.map((item, index) => {
+            const title = language === 'mr' ? (item.title_mr || item.title_en) : (item.title_en || item.title_mr)
+            const body = language === 'mr' ? (item.body_mr || item.body_en) : (item.body_en || item.body_mr)
+            const author = language === 'mr' ? (item.author_mr || item.author_en) : (item.author_en || item.author_mr)
+            const mediaSrc = resolveAboutMedia(item.image_path)
+            return (
+              <article className="memory-video-card" key={item.id}>
+                {mediaSrc && (
+                  isVideoMedia(item.image_path)
+                    ? <video src={mediaSrc} controls preload="metadata" playsInline />
+                    : <img src={mediaSrc} alt={title} loading="lazy" />
+                )}
+                <div className="memory-video-card__caption">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <h3>{title}</h3>
+                </div>
+                {body && <p>{body}</p>}
+                {author && <small>{author}</small>}
+              </article>
+            )
+          })}
+        </div>
+      </section>
+    )}
+
+    <section className="memory-video-collection section" aria-label={t.feedback}>
+      <div className="gallery-heading">
+        <h2>{t.feedback}</h2>
+        <span>{testimonials.length}</span>
+      </div>
+      {testimonials.length === 0 ? (
+        <p>{t.feedbackText}</p>
+      ) : (
+        <div className="memory-video-grid">
+          {testimonials.map((item, index) => {
+            const title = language === 'mr' ? (item.title_mr || item.title_en) : (item.title_en || item.title_mr)
+            const body = language === 'mr' ? (item.body_mr || item.body_en) : (item.body_en || item.body_mr)
+            const author = language === 'mr' ? (item.author_mr || item.author_en) : (item.author_en || item.author_mr)
+            const mediaSrc = resolveAboutMedia(item.image_path)
+            return (
+              <article className="memory-video-card" key={item.id}>
+                {mediaSrc && (
+                  isVideoMedia(item.image_path)
+                    ? <video src={mediaSrc} controls preload="metadata" playsInline />
+                    : <img src={mediaSrc} alt={author || title} loading="lazy" />
+                )}
+                <div className="memory-video-card__caption">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  <h3>{title || author}</h3>
+                </div>
+                {body && <blockquote>{body}</blockquote>}
+                {author && <strong>{author}</strong>}
+              </article>
+            )
+          })}
+        </div>
+      )}
+    </section>
   </main>
 }
 
@@ -484,6 +648,9 @@ function Memories({ language, memories }: { language: Language; memories: Memory
     })}</div></section>
   </main>
 }
+
+
+
 
 export default function App() {
   const [page, setPage] = useState<Page>(getPage)
